@@ -1,3 +1,4 @@
+import os.path as op
 import json
 import fmriprep.utils.misc as misc
 import re
@@ -11,9 +12,9 @@ class TestCollectBids(unittest.TestCase):
     @classmethod
     def setUp(self):
         try:
-            all_subjects = misc.collect_bids_data(c.DATASET)
+            subject_data = misc.collect_bids_data(c.DATASET, self.subject_id)
             self.imaging_data = {
-                self.subject_id: all_subjects[self.subject_id]
+                self.subject_id: subject_data
             }
         except Exception as e:
             url = "http://googledrive.com/host/0BxI12kyv2olZbl9GN3BIOVVoelE"
@@ -26,16 +27,18 @@ class TestCollectBids(unittest.TestCase):
         self.assertNotEqual(0, len(next(iter(self.imaging_data.values()))))
 
     def test_epi(self):
-        epi_template = "{subject}/func/{subject}_task-rest_acq-LR_run-1_bold.nii.gz"
-        self.assert_key_exists(epi_template, 'epi')
+        epi_template = op.join(c.DATASET, "{subject}/func/"
+                               "{subject}_task-rest_acq-RL_run-1_bold.nii.gz")
+        self.assert_key_exists(epi_template, 'func')
 
     def test_sbref(self):
-        sbref_template = (c.DATASET + "/{subject}/func/"
+        sbref_template = op.join(c.DATASET, "{subject}/func/"
                           "{subject}_task-rest_acq-LR_run-1_sbref.nii.gz")
         self.assert_key_exists(sbref_template, 'sbref')
 
     def test_t1(self):
-        t1_template = "{subject}/anat/{subject}_run-1_T1w.nii.gz"
+        t1_template = op.join(c.DATASET,
+                              "{subject}/anat/{subject}_run-1_T1w.nii.gz")
         self.assert_key_exists(t1_template, 't1')
 
     def test_fieldmaps(self):

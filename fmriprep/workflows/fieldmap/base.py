@@ -38,7 +38,7 @@ def fieldmap_decider(fieldmap_data, settings):
 
     try:
         fieldmap_data[0]
-    except IndexError as e:
+    except (IndexError, TypeError) as e:
         raise_from(NotImplementedError("No fieldmap data found"), e)
 
     for filename in subject_data['fieldmaps']:
