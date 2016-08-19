@@ -16,13 +16,13 @@ from __future__ import unicode_literals
 from argparse import ArgumentParser
 from argparse import RawTextHelpFormatter
 from lockfile import LockFile
+
 import logging
 from multiprocessing import cpu_count
 import os
 import os.path as op
 import pkg_resources as pkgr
-
-from pprint import pprint as pp
+import pprint
 
 def main():
     """Entry point"""
@@ -31,7 +31,7 @@ def main():
     from nipype.pipeline import engine as pe
     from fmriprep import __version__
     from fmriprep.workflows import fmriprep_single
-    from fmriprep.utils.misc import get_subject
+    from fmriprep.utils.misc import collect_bids_data
 
     parser = ArgumentParser(description='fMRI Preprocessing workflow',
                             formatter_class=RawTextHelpFormatter)
@@ -67,12 +67,6 @@ def main():
 
     opts = parser.parse_args()
 
-    # Warn for default work/output directories
-    if (opts.work_dir == parser.get_default('work_dir') or
-          opts.output_dir == parser.get_default('output_dir')):
-        logging.warning("work-dir and/or output-dir not specified. Using " +
-                        opts.work_dir + " and " + opts.output_dir)
-
     settings = {
         'bids_root': op.abspath(opts.bids_root),
         'write_graph': opts.write_graph,
@@ -83,8 +77,12 @@ def main():
         'work_dir': op.abspath(opts.work_dir)
     }
 
+    # set up logger
+    logger = logging.getLogger('cli')
+
     if opts.debug:
         settings['ants_t1-mni_settings'] = 't1-mni_registration_test'
+        logger.setLevel(logging.DEBUG)
 
     log_dir = op.join(settings['work_dir'], 'log')
 
@@ -99,6 +97,14 @@ def main():
 
         if not op.exists(log_dir):
             os.makedirs(log_dir)
+
+    logger.addHandler(logging.FileHandler(op.join(log_dir,'run_workflow')))
+
+    # Warn for default work/output directories
+    if (opts.work_dir == parser.get_default('work_dir') or
+          opts.output_dir == parser.get_default('output_dir')):
+        logger.warning("work-dir and/or output-dir not specified. Using " +
+                        opts.work_dir + " and " + opts.output_dir)
 
     # Set nipype config
     ncfg.update_config({
@@ -123,11 +129,11 @@ def main():
 
     # Retrieve BIDS data
     subject_data = collect_bids_data(settings['bids_root'], opts.subject_id)
-    
-    pp(subject_data)
+
+    logger.info("subject data is " + pprint.pformat(subject_data))
 
     # Build main workflow and run
-    preproc_wf = fmriprep_single(imaging_data, settings=settings)
+    preproc_wf = fmriprep_single(subject_data, settings=settings)
     preproc_wf.base_dir = settings['work_dir']
     #  preproc_wf.run(**plugin_settings)
 
