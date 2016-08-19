@@ -37,10 +37,15 @@ def main():
 
     g_input = parser.add_argument_group('Inputs')
     # Arguments as specified by BIDS-Apps
+    # required, positional arguments
     g_input.add_argument('bids_dir', action='store', default=os.getcwd())
+    g_input.add_argument('output_dir', action='store',
+                         default=op.join(os.getcwd(), 'out'))
+
+    # optional arguments
     g_input.add_argument('-S', '--subject-id', '--participant_label', action='store', nargs='+')
 
-    # Additional arguments
+    # fmriprep-specific arguments
     g_input.add_argument('-s', '--session-id', action='store', default='single_session')
     g_input.add_argument('-r', '--run-id', action='store', default='single_run')
     g_input.add_argument('-d', '--data-type', action='store', choices=['anat', 'func'])
@@ -58,12 +63,6 @@ def main():
         "--use-plugin", action='store', default=None,
         help='nipype plugin configuration file')
 
-    g_outputs = parser.add_argument_group('Outputs')
-    g_outputs.add_argument('-o', '--output-dir', action='store',
-                           default=op.join(os.getcwd(), 'out'))
-    g_outputs.add_argument('-w', '--work-dir', action='store',
-                           default=op.join(os.getcwd(), 'work'))
-
     g_input.add_argument('-v', '--version', action='version',
                          version='fmriprep v{}'.format(__version__))
 
@@ -76,8 +75,9 @@ def main():
         'debug': opts.debug,
         'skull_strip_ants': opts.skull_strip_ants,
         'output_dir': op.abspath(opts.output_dir),
-        'work_dir': op.abspath(opts.work_dir)
     }
+
+    settings['work_dir'] = op.join(settings['output_dir'], 'work')
 
     # set up logger
     logger = logging.getLogger('cli')
@@ -105,12 +105,6 @@ def main():
             os.makedirs(log_dir)
 
     logger.addHandler(logging.FileHandler(op.join(log_dir,'run_workflow')))
-
-    # Warn for default work/output directories
-    if (opts.work_dir == parser.get_default('work_dir') or
-          opts.output_dir == parser.get_default('output_dir')):
-        logger.warning("work-dir and/or output-dir not specified. Using " +
-                        opts.work_dir + " and " + opts.output_dir)
 
     # Set nipype config
     ncfg.update_config({
