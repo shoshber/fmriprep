@@ -6,7 +6,6 @@ import mock
 
 class TestBase(unittest.TestCase):
 
-#    @unittest.skip('AvScaleInputSpec in nipype does not match')
     @mock.patch('fmriprep.workflows.sbref.sbref_t1_registration')
     def test_fmriprep_single(self, mock_registration):
         ''' Tests fmriprep_single for code errors, not correctness '''
