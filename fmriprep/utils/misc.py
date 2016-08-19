@@ -3,7 +3,6 @@ from glob import glob
 import itertools
 import json
 import os
-import pkg_resources as pkgr
 import re
 
 from grabbit import Layout
@@ -25,29 +24,29 @@ def is_fieldmap_file(string):
     return is_fieldmap_file
 
 fieldmap_suffixes = {
-    'phasediff': r"phasediff[0-9]*\.nii",
-    'magnitude': r"magnitude[0-9]*\.nii",
-    'phase': r"phase[0-9]+\.nii",
-    'fieldmap': r"fieldmap\.nii",
-    'topup': r"epi\.nii"
+    'phasediff': r"phasediff[0-9]*\.nii(\.gz)?",
+    'magnitude': r"magnitude[0-9]*\.nii(\.gz)?",
+    'phase': r"phase[0-9]+\.nii(\.gz)?",
+    'fieldmap': r"fieldmap\.nii(\.gz)?",
+    'topup': r"epi\.nii(\.gz)?"
 }
 
 # currently does not handle multiple sessions
-def collect_bids_data(dataset, subject, session=None, run=None):
+def collect_bids_data(dataset, subject, spec, session=None, run=None):
+
     subject = str(subject)
     if not subject.startswith('sub-'):
         subject = 'sub-{}'.format(subject)
 
-    bids_spec = pkgr.resource_filename('fmriprep', 'data/bids.json')
-    layout = Layout(dataset, config=bids_spec)
-    
+    layout = Layout(dataset, config=spec)
+
     if session:
         session_list = [session]
     else:
         session_list = layout.unique('session')
         if session_list == []:
             session_list = [None]
-    
+
     if run:
         run_list = [run]
     else:
@@ -56,10 +55,10 @@ def collect_bids_data(dataset, subject, session=None, run=None):
             run_list = [None]
 
     queries = {
-        'fieldmaps': {'fieldmap': '.*', 'ext': 'nii'},
+        'fmap': {'modality': 'fmap', 'ext': 'nii'},
         'epi': {'modality': 'func', 'type': 'bold', 'ext': 'nii'},
         'sbref': {'modality': 'func', 'type': 'sbref', 'ext': 'nii'},
-        't1': {'type': 'T1w', 'ext': 'nii'}
+        't1w': {'type': 'T1w', 'ext': 'nii'}
     }
 
     for session in session_list:
@@ -71,10 +70,10 @@ def collect_bids_data(dataset, subject, session=None, run=None):
             queries[key]['subject'] = subject
 
         session_data = copy.deepcopy(INPUTS_SPEC)
-        fieldmap_files = [x.filename for x in layout.get(**queries['fieldmaps'])]
-        session_data['fieldmaps'] = fieldmap_files
-        t1_files = [x.filename for x in layout.get(**queries['t1'])]
-        session_data['t1'] = t1_files
+        fieldmap_files = [x.filename for x in layout.get(**queries['fmap'])]
+        session_data['fmap'] = fieldmap_files
+        t1_files = [x.filename for x in layout.get(**queries['t1w'])]
+        session_data['t1w'] = t1_files
         sbref_files = [x.filename for x in layout.get(**queries['sbref'])]
         session_data['sbref'] = sbref_files
 
@@ -93,7 +92,7 @@ def collect_bids_data(dataset, subject, session=None, run=None):
         query_kwargs = itertools.product(*query_kwargs)
 
         for elem in query_kwargs:
-            epi_files = [x.filename for x 
+            epi_files = [x.filename for x
                          in layout.get(**dict(dict(elem), **queries['epi']))]
             if epi_files:
                 session_data['func'].extend(epi_files)

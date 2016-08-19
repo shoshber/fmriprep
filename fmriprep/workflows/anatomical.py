@@ -36,7 +36,7 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
 
     workflow = pe.Workflow(name=name)
 
-    inputnode = pe.Node(niu.IdentityInterface(fields=['t1']), name='inputnode')
+    inputnode = pe.Node(niu.IdentityInterface(fields=['t1w']), name='inputnode')
     outputnode = pe.Node(niu.IdentityInterface(
         fields=['t1_seg', 'bias_corrected_t1', 't1_brain', 't1_2_mni',
                 't1_2_mni_forward_transform', 't1_2_mni_reverse_transform',
@@ -86,7 +86,7 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
 
 
     workflow.connect([
-        (inputnode, arw, [('t1', 'in_file')]),
+        (inputnode, arw, [('t1w', 'in_file')]),
         (arw, inu_n4, [('out_file', 'input_image')]),
         (inu_n4, asw, [('output_image', 'inputnode.in_file')]),
         (asw, t1_seg, [('outputnode.out_file', 'in_files')]),
@@ -186,7 +186,7 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
             return inlist[-1]
 
         workflow.connect([
-            (inputnode, ds_t1_mni_warp, [('t1', 'source_file')]),
+            (inputnode, ds_t1_mni_warp, [('t1w', 'source_file')]),
             (t1_2_mni, ds_t1_mni_aff, [
                 (('forward_transforms', _get_aff), 'in_file')]),
             (t1_2_mni, ds_t1_mni_warp, [
@@ -194,13 +194,13 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
         ])
 
     workflow.connect([
-        (inputnode, ds_t1_bias, [('t1', 'source_file')]),
-        (inputnode, ds_t1_seg, [('t1', 'source_file')]),
-        (inputnode, ds_mask, [('t1', 'source_file')]),
-        (inputnode, ds_t1_mni, [('t1', 'source_file')]),
-        (inputnode, ds_t1_mni_aff, [('t1', 'source_file')]),
-        (inputnode, ds_bmask_mni, [('t1', 'source_file')]),
-        (inputnode, ds_tpms_mni, [('t1', 'source_file')]),
+        (inputnode, ds_t1_bias, [('t1w', 'source_file')]),
+        (inputnode, ds_t1_seg, [('t1w', 'source_file')]),
+        (inputnode, ds_mask, [('t1w', 'source_file')]),
+        (inputnode, ds_t1_mni, [('t1w', 'source_file')]),
+        (inputnode, ds_t1_mni_aff, [('t1w', 'source_file')]),
+        (inputnode, ds_bmask_mni, [('t1w', 'source_file')]),
+        (inputnode, ds_tpms_mni, [('t1w', 'source_file')]),
         (asw, ds_t1_bias, [('outputnode.out_file', 'in_file')]),
         (t1_seg, ds_t1_seg, [('tissue_class_map', 'in_file')]),
         (asw, ds_mask, [('outputnode.out_mask', 'in_file')]),

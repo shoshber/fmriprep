@@ -12,11 +12,12 @@ class TestCollectBids(unittest.TestCase):
     @classmethod
     def setUp(self):
         try:
-            subject_data = misc.collect_bids_data(c.DATASET, self.subject_id)
+            subject_data = misc.collect_bids_data(c.DATASET, self.subject_id,
+                                                  c.BIDS_SPEC)
             self.imaging_data = {
                 self.subject_id: subject_data
             }
-        except Exception as e:
+        except IOError as e:
             url = "http://googledrive.com/host/0BxI12kyv2olZbl9GN3BIOVVoelE"
             raise_from(Exception("Couldn't find data at " + c.DATASET + 
                                  ". Download from " + url), e)
@@ -36,10 +37,10 @@ class TestCollectBids(unittest.TestCase):
                           "{subject}_task-rest_acq-LR_run-1_sbref.nii.gz")
         self.assert_key_exists(sbref_template, 'sbref')
 
-    def test_t1(self):
+    def test_t1w(self):
         t1_template = op.join(c.DATASET,
                               "{subject}/anat/{subject}_run-1_T1w.nii.gz")
-        self.assert_key_exists(t1_template, 't1')
+        self.assert_key_exists(t1_template, 't1w')
 
     def test_fieldmaps(self):
         fieldmap_pattern = r"{0}\/fmap\/{0}_dir-[0-9]+_run-[0-9]+_epi\.nii\.gz"
