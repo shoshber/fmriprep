@@ -75,8 +75,6 @@ def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
     ])
 
 
-
-
     # inputnode = pe.Node(niu.IdentityInterface(
     #     fields=['fieldmaps', 't1', 'func', 'sbref']), name='inputnode')
 
