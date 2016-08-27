@@ -82,6 +82,9 @@ def main():
     # set up logger
     logger = logging.getLogger('cli')
 
+    # set up logger
+    logger = logging.getLogger('cli')
+
     if opts.debug:
         settings['ants_t1-mni_settings'] = 't1-mni_registration_test'
         logger.setLevel(logging.DEBUG)
@@ -131,7 +134,11 @@ def main():
         subject_list = [op.basename(subdir)[4:] for subdir in glob.glob(
             op.join(settings['bids_root'], 'sub-*'))]
 
+<<<<<<< HEAD
     logger.info("subject list: " + str(subject_list))
+=======
+    logger.info("subject list: {}", ', '.join(subject_list))
+>>>>>>> aeb85fd874a336b55cf569dd0402662e44303dce
 
     # Build main workflow and run
     preproc_wf = fmriprep_single(subject_list, settings=settings)
