@@ -87,7 +87,6 @@ def main():
         logger.setLevel(logging.DEBUG)
 
     log_dir = op.join(settings['work_dir'], 'log')
-    logger.addHandler(logging.FileHandler(op.join(log_dir,'run_workflow')))
 
     # Check and create output and working directories
     # Using locks to prevent https://github.com/poldracklab/mriqc/issues/111
@@ -101,6 +100,8 @@ def main():
 
         if not op.exists(log_dir):
             os.makedirs(log_dir)
+
+    logger.addHandler(logging.FileHandler(op.join(log_dir,'run_workflow')))
 
     # Set nipype config
     ncfg.update_config({
