@@ -7,7 +7,7 @@ set -e
 if [[ ! -d ${HOME}/scratch/data/aa_conn ]]; then
     # Folder for downloads
     mkdir -p ${HOME}/downloads
-    wget -c -O ${HOME}/downloads/testdata.tar "https://3552243d5be815c1b09152da6525cb8fe7b900a6.googledrive.com/host/0BxI12kyv2olZVUswazA3NkFvOXM/test_fmriprep_data.tar.gz"
+    wget -c -O ${HOME}/downloads/testdata.tar "https://3552243d5be815c1b09152da6525cb8fe7b900a6.googledrive.com/host/0BxI12kyv2olZVUswazA3NkFvOXM/ds054_downsampled.tar.gz"
     mkdir -p ${HOME}/scratch/data/
     tar xf ${HOME}/downloads/testdata.tar -C ${HOME}/scratch/data
 fi
