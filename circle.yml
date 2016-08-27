@@ -17,7 +17,7 @@ dependencies:
 test:
   override:
 #    - docker run -t -v ~/scratch/data:/root/src/preprocessing-workflow/test_data --entrypoint="/usr/bin/run_unittests" -w "/root/src/preprocessing-workflow" oesteban/fmriprep
-    - docker run -i -v /etc/localtime:/etc/localtime:ro -v ~/scratch:/scratch -w /scratch --entrypoint="/usr/bin/run_fmriprep" oesteban/fmriprep /scratch/data/testdata/ds054 /scratch/outputs/ms-fmriprep/ participant --participant_label 100185 --debug :
+    - docker run -i -v /etc/localtime:/etc/localtime:ro -v ~/scratch:/scratch -w /scratch --entrypoint="/usr/bin/run_fmriprep" oesteban/fmriprep /scratch/data/ds054 /scratch/outputs/ms-fmriprep/ participant --participant_label 100185 --debug :
         timeout: 4800
 
 general:
