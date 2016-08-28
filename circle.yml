@@ -4,16 +4,17 @@ machine:
 
 dependencies:
   cache_directories:
-    - "~/downloads/"
+    - "~/data/"
     - "~/docker/"
 
   pre:
     # Download test data
-    - bash build/circle_setup.sh
+    - mkdir -p ~/data ~/docker ~/scratch
+    - if [[ ! -d ~/data/ds054 ]]; then wget --retry-connrefused --waitretry=5 --read-timeout=20 --timeout=15 -t 0 -q https://3552243d5be815c1b09152da6525cb8fe7b900a6.googledrive.com/host/0BxI12kyv2olZVUswazA3NkFvOXM/ds054_downsampled.tar.gz && tar xzf ds054_downsampled.tar.gz -C ~/data/; fi
   override:
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
-    - docker build -t poldracklab/preprocessing-workflow:latest .
-    - mkdir -p ~/docker; docker save poldracklab/preprocessing-workflow:latest > ~/docker/image.tar
+    - docker build -t poldracklab/fmriprep:latest .
+    - mkdir -p ~/docker; docker save poldracklab/fmriprep:latest > ~/docker/image.tar
 test:
   override:
 #    - docker run -t -v ~/scratch/data:/root/src/preprocessing-workflow/test_data --entrypoint="/usr/bin/run_unittests" -w "/root/src/preprocessing-workflow" poldracklab/preprocessing-workflow
@@ -22,7 +23,5 @@ test:
 
 general:
   artifacts:
-    #- "~/scratch/outputs/ss-all/out"
-    #- "~/scratch/outputs/ss-all/work"
-    - "~/scratch/outputs/ms-fmriprep/out"
-    - "~/scratch/outputs/ms-fmriprep/work"
+    - "~/scratch/out"
+    - "~/scratch/work"

@@ -33,19 +33,22 @@ def main():
     parser = ArgumentParser(description='fMRI Preprocessing workflow',
                             formatter_class=RawTextHelpFormatter)
 
-    g_input = parser.add_argument_group('Inputs')
     # Arguments as specified by BIDS-Apps
     # required, positional arguments
-    g_input.add_argument('bids_dir', action='store', default=os.getcwd())
-    g_input.add_argument('output_dir', action='store',
+    # IMPORTANT: they must go directly with the parser object
+    parser.add_argument('bids_dir', action='store', default=os.getcwd())
+    parser.add_argument('output_dir', action='store',
                          default=op.join(os.getcwd(), 'out'))
-    g_input.add_argument('analysis_level', choices=['participant'])
+    parser.add_argument('analysis_level', choices=['participant'])
 
     # optional arguments
-    g_input.add_argument('-S', '--subject-id', '--participant_label',
+    parser.add_argument('-S', '--subject-id', '--participant_label',
                          action='store', nargs='+')
+    parser.add_argument('-v', '--version', action='version',
+                         version='fmriprep v{}'.format(__version__))
 
-    # fmriprep-specific arguments
+
+    g_input = parser.add_argument_group('fMRIprep specific arguments')
     g_input.add_argument('-s', '--session-id', action='store', default='single_session')
     g_input.add_argument('-r', '--run-id', action='store', default='single_run')
     g_input.add_argument('-d', '--data-type', action='store', choices=['anat', 'func'])
@@ -63,8 +66,8 @@ def main():
         "--use-plugin", action='store', default=None,
         help='nipype plugin configuration file')
 
-    g_input.add_argument('-v', '--version', action='version',
-                         version='fmriprep v{}'.format(__version__))
+    g_input.add_argument('-w', '--work-dir', action='store',
+                           default=op.join(os.getcwd(), 'work'))
 
     opts = parser.parse_args()
 
@@ -75,6 +78,7 @@ def main():
         'debug': opts.debug,
         'skull_strip_ants': opts.skull_strip_ants,
         'output_dir': op.abspath(opts.output_dir),
+        'work_dir': op.abspath(opts.work_dir)
     }
     settings['work_dir'] = settings['output_dir'] # other wfs assume this is set
 
@@ -130,11 +134,11 @@ def main():
     # Determine subjects to be processed
     subject_list = opts.subject_id
 
-    if not subject_list or len(subject_list) == 0:
+    if subject_list is None or not subject_list:
         subject_list = [op.basename(subdir)[4:] for subdir in glob.glob(
             op.join(settings['bids_root'], 'sub-*'))]
 
-    logger.info("subject list: " + str(subject_list))
+    logger.info("subject list: %s", ', '.join(subject_list))
 
     # Build main workflow and run
     preproc_wf = fmriprep_single(subject_list, settings=settings)
@@ -143,8 +147,6 @@ def main():
 
     if opts.write_graph:
         preproc_wf.write_graph()
-
-
 
 if __name__ == '__main__':
     main()

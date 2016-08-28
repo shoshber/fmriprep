@@ -9,7 +9,7 @@ the Center for Reproducible Neuroscience (http://reproducibility.stanford.edu/),
 as well as for open-source software distribution.
 """
 
-__version__ = '0.1.1a1'
+__version__ = '0.1.1a2'
 
 
 __author__ = 'The CRN developers'
