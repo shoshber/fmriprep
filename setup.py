@@ -3,31 +3,35 @@
 # @Author: oesteban
 # @Date:   2015-11-19 16:44:27
 # @Last Modified by:   oesteban
-# @Last Modified time: 2016-07-29 16:38:19
+# @Last Modified time: 2016-08-29 18:50:54
 """ fmriprep setup script """
 import os
 import sys
 
-from fmriprep import (__version__, __email__, __url__, __packagename__, __license__,
-                      __description__, __longdesc__, __maintainer__, __author__)
-
-
-REQ_LINKS = []
-with open('requirements.txt', 'r') as rfile:
-    REQUIREMENTS = [line.strip() for line in rfile.readlines()]
-
-for i, req in enumerate(REQUIREMENTS):
-    if req.startswith('-e'):
-        REQUIREMENTS[i] = req.split('=')[1]
-        REQ_LINKS.append(req.split()[1])
-
-if REQUIREMENTS is None:
-    REQUIREMENTS = []
 
 def main():
     """ Install entry-point """
     from glob import glob
-    from setuptools import setup
+    from inspect import getfile, currentframe
+    from setuptools import setup, find_packages
+
+    this_path = os.path.dirname(os.path.abspath(getfile(currentframe())))
+    # Read vars from info file
+    module_file =os.path.join(this_path, 'fmriprep', 'info.py')
+    with open(module_file) as fvars:
+        exec(compile(fvars.read(), module_file, 'exec'))
+
+    REQ_LINKS = []
+    with open('requirements.txt', 'r') as rfile:
+        REQUIREMENTS = [line.strip() for line in rfile.readlines()]
+
+    for i, req in enumerate(REQUIREMENTS):
+        if req.startswith('-e'):
+            REQUIREMENTS[i] = req.split('=')[1]
+            REQ_LINKS.append(req.split()[1])
+
+    if REQUIREMENTS is None:
+        REQUIREMENTS = []
 
     setup(
         name=__packagename__,
@@ -44,14 +48,7 @@ def main():
                      'fmriprep-%s.tar.gz' % __version__,
         license=__license__,
         entry_points={'console_scripts': ['fmriprep=fmriprep.run_workflow:main',]},
-        packages=['fmriprep',
-                  'fmriprep.data',
-                  'fmriprep.interfaces',
-                  'fmriprep.utils',
-                  'fmriprep.viz',
-                  'fmriprep.workflows',
-                  'fmriprep.workflows.fieldmap',
-        ],
+        packages=find_packages(),
         package_data={'fmriprep': ['data/*.json']},
         install_requires=REQUIREMENTS,
         dependency_links=REQ_LINKS,
@@ -67,8 +64,8 @@ def main():
     )
 
 if __name__ == '__main__':
-    local_path = os.path.dirname(os.path.abspath(sys.argv[0]))
-    os.chdir(local_path)
-    sys.path.insert(0, local_path)
+    LOCAL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
+    os.chdir(LOCAL_PATH)
+    sys.path.insert(0, LOCAL_PATH)
 
     main()

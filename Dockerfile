@@ -45,10 +45,10 @@ RUN rm -rf /usr/local/miniconda/lib/python*/site-packages/nipype* && \
     
 
 WORKDIR /root/src
-ADD . preprocessing-workflow/
+ADD . fmriprep/
 # Install nipype & mriqc
 
-RUN cd preprocessing-workflow && \
+RUN cd fmriprep && \
     pip install -r requirements.txt && \
     pip install -e .
 

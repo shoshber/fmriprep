@@ -39,7 +39,7 @@ def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
     bidssrc = pe.Node(BIDSDataGrabber(bids_root=settings['bids_root']),
                       name='BIDSDatasource')
 
-    # Preprocessing of T1w
+    # Preprocessing of T1w (includes registration to MNI)
     t1w_pre = t1w_preprocessing(settings=settings)
 
     # Estimate fieldmap
@@ -48,7 +48,7 @@ def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
     # Correct SBRef
     sbref_pre = sbref_preprocess(settings=settings)
 
-    # Register SBRef and MNI
+    # Register SBRef to T1
     sbref_t1 = sbref_t1_registration(settings=settings)
 
     # HMC on the EPI
@@ -56,6 +56,9 @@ def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
 
     # EPI to SBRef
     epi2sbref = epi_sbref_registration()
+
+    # EPI unwarp
+    epiunwarp_wf = epi_unwarp(settings=settings)
 
     workflow.connect([
         (inputnode, bidssrc, [('subject_id', 'subject_id')]),
@@ -71,7 +74,12 @@ def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
             ('outputnode.t1_seg', 'inputnode.t1_seg')]),
         (bidssrc, hmcwf, [(('func', _first), 'inputnode.epi')]),
         (sbref_pre, epi2sbref, [('outputnode.sbref_unwarped', 'inputnode.sbref_brain')]),
-        (hmcwf, epi2sbref, [('outputnode.epi_brain', 'inputnode.epi_brain')])
+        (hmcwf, epi2sbref, [('outputnode.epi_brain', 'inputnode.epi_brain')]),
+
+        (bidssrc, epiunwarp_wf, [(('func', _first), 'inputnode.epi')]),
+        (fmap_est, epiunwarp_wf, [('outputnode.fmap', 'inputnode.fmap'),
+                                  ('outputnode.fmap_mask', 'inputnode.fmap_mask'),
+                                  ('outputnode.fmap_ref', 'inputnode.fmap_ref')])
     ])
 
 

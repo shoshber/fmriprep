@@ -6,10 +6,21 @@
 Welcome to fMRIprep's documentation!
 ====================================
 
-Contents:
+.. include:: ../README.rst
+
+.. include:: authors.rst
+
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
+
+   installation
+   usage
+   dependencies
+   about
 
 
 

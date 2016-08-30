@@ -22,7 +22,7 @@ from nipype.pipeline import engine as pe
 from niworkflows.anat.skullstrip import afni_wf as skullstrip_wf
 from niworkflows.common import reorient as mri_reorient_wf
 
-from fmriprep.interfaces import DerivativesDataSink
+from fmriprep.interfaces import DerivativesDataSink, IntraModalMerge
 from fmriprep.data import get_ants_oasis_template_ras, get_mni_template_ras
 from fmriprep.viz import stripped_brain_overlay, anatomical_overlay
 
@@ -42,11 +42,14 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
                 't1_2_mni_forward_transform', 't1_2_mni_reverse_transform',
                 't1_segmentation']), name='outputnode')
 
+    # 0. Align and merge if several T1w images are provided
+    t1wmrg = pe.Node(IntraModalMerge(), name='MergeT1s')
+
     # 1. Reorient T1
     arw = pe.Node(fs.MRIConvert(out_type='niigz', out_orientation='RAS'), name='Reorient')
 
     # 2. T1 Bias Field Correction
-    inu_n4 = pe.Node(ants.N4BiasFieldCorrection(dimension=3), name='Bias_Field_Correction')
+    inu_n4 = pe.Node(ants.N4BiasFieldCorrection(dimension=3), name='CorrectINU')
 
     # 3. Skull-stripping
     asw = skullstrip_wf()
@@ -54,15 +57,11 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
         asw = skullstrip_ants(settings=settings)
 
     # 4. Segmentation
-    t1_seg = pe.Node(fsl.FAST(no_bias=True, probability_maps=True), name='T1_Segmentation')
+    t1_seg = pe.Node(fsl.FAST(no_bias=True, probability_maps=True), name='Segmentation')
 
     # 5. T1w to MNI registration
     t1_2_mni = pe.Node(ants.Registration(), name='T1_2_MNI_Registration')
-    t1_2_mni.inputs.collapse_output_transforms = False
-    t1_2_mni.inputs.write_composite_transform = False
-    t1_2_mni.inputs.output_transform_prefix = 'T1_to_MNI_'
-    t1_2_mni.inputs.output_warped_image = 't1_to_mni.nii.gz'
-    t1_2_mni.inputs.num_threads = 4
+    t1_2_mni.inputs.num_threads = settings.get('ants_threads', 8)
     t1_2_mni.inputs.fixed_image = op.join(get_mni_template_ras(), 'MNI152_T1_1mm.nii.gz')
     t1_2_mni.inputs.fixed_image_mask = op.join(
         get_mni_template_ras(), 'MNI152_T1_1mm_brain_mask.nii.gz')
@@ -86,7 +85,8 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
 
 
     workflow.connect([
-        (inputnode, arw, [('t1w', 'in_file')]),
+        (inputnode, t1wmrg, [('t1w', 'in_files')]),
+        (t1wmrg, arw, [('out_avg', 'in_file')]),
         (arw, inu_n4, [('out_file', 'input_image')]),
         (inu_n4, asw, [('output_image', 'inputnode.in_file')]),
         (asw, t1_seg, [('outputnode.out_file', 'in_files')]),
