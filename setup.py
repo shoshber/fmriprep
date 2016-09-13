@@ -63,6 +63,20 @@ def main():
         ],
     )
 
+    # if this is being set up in a git repo
+    if glob('.git'):
+        print('had .git')
+        enforce_pep8()
+
+def enforce_pep8():
+    import shutil
+    from future.utils import raise_from
+
+    try:
+        shutil.copyfile('./hooks/pre-commit', '.git/hooks/pre-commit')
+    except Exception as e:
+        raise_from("failed to set up git hooks", e)
+
 if __name__ == '__main__':
     LOCAL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
     os.chdir(LOCAL_PATH)
