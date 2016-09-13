@@ -22,9 +22,16 @@ from fmriprep.workflows.epi import (
     epi_unwarp, epi_hmc, epi_sbref_registration,
     epi_mean_t1_registration, epi_mni_transformation)
 
-def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
+def wf_ds054_type(subject_list, name='fMRI_prep', settings=None):
     """
-    The main fmri preprocessing workflow.
+    The main fmri preprocessing workflow, for the ds054-type of data:
+
+      * [x] Has at least one T1w and at least one bold file (minimal reqs.)
+      * [x] Has one or more SBRefs
+      * [x] Has one or more GRE-phasediff images, including the corresponding magnitude images.
+      * [ ] No SE-fieldmap images
+      * [ ] No Spiral Echo fieldmap
+
     """
 
     if settings is None:
@@ -81,105 +88,63 @@ def fmriprep_single(subject_list, name='fMRI_prep', settings=None):
                                   ('outputnode.fmap_mask', 'inputnode.fmap_mask'),
                                   ('outputnode.fmap_ref', 'inputnode.fmap_ref')])
     ])
+    return workflow
 
 
-    # inputnode = pe.Node(niu.IdentityInterface(
-    #     fields=['fieldmaps', 't1', 'func', 'sbref']), name='inputnode')
+def wf_ds005_type(subject_list, name='fMRI_prep', settings=None):
+    """
+    The main fmri preprocessing workflow, for the ds005-type of data:
 
-    # for key in subject_list.keys():
-    #     if key != 'func':
-    #         setattr(inputnode.inputs, key, subject_list[key])
+      * [x] Has at least one T1w and at least one bold file (minimal reqs.)
+      * [ ] No SBRefs
+      * [ ] No GRE-phasediff images, including the corresponding magnitude images.
+      * [ ] No SE-fieldmap images
+      * [ ] No Spiral Echo fieldmap
 
-    # inputfmri = pe.Node(niu.IdentityInterface(
-    #                     fields=['func']), name='inputfmri')
-    # inputfmri.iterables = [('func', subject_list['func'])]
+    """
 
-    # outputnode = pe.Node(niu.IdentityInterface(
-    #     fields=['fieldmap', 'corrected_sbref', 'fmap_mag', 'fmap_mag_brain',
-    #             't1', 'stripped_epi', 'corrected_epi_mean', 'sbref_brain',
-    #             'stripped_epi_mask', 'stripped_t1', 't1_segmentation',
-    #             't1_2_mni', 't1_wm_seg']),
-    #     name='outputnode'
-    # )
+    if settings is None:
+        settings = {}
 
-    # try:
-    #     fmap_wf = fieldmap_decider(getattr(inputnode.inputs, 'fieldmaps'), settings)
-    # except NotImplementedError:
-    #     fmap_wf = None
+    workflow = pe.Workflow(name=name)
 
-    # # Reorient EPI to RAS
-    # split = pe.Node(fsl.Split(dimension='t'), name='SplitEPI')
-    # orient = pe.MapNode(fs.MRIConvert(out_type='niigz', out_orientation='RAS'),
-    #                     iterfield=['in_file'], name='ReorientEPI')
-    # merge = pe.Node(fsl.Merge(dimension='t'), name='MergeEPI')
+    inputnode = pe.Node(niu.IdentityInterface(fields=['subject_id']),
+                        name='inputnode')
+    inputnode.iterables = [('subject_id', subject_list)]
 
-    #
-    # epi_hmc_wf = epi_hmc(settings=settings, sbref_present=sbref_present)
-    # epi_mni_trans_wf = epi_mni_transformation(settings=settings)
+    bidssrc = pe.Node(BIDSDataGrabber(bids_root=settings['bids_root']),
+                      name='BIDSDatasource')
 
-    # #  Connecting Workflow pe.Nodes
-    # workflow.connect([
-    #     (inputfmri, split, [('func', 'in_file')]),
-    #     (split, orient, [('out_files', 'in_file')]),
-    #     (orient, merge, [('out_file', 'in_files')]),
+    # Preprocessing of T1w (includes registration to MNI)
+    t1w_pre = t1w_preprocessing(settings=settings)
 
-    #     (inputnode, t1w_preproc, [('t1', 'inputnode.t1')]),
-    #     (merge, epi_hmc_wf, [('merged_file', 'inputnode.epi_ras')]),
-    #     (merge, epi_mni_trans_wf, [('merged_file', 'inputnode.epi_ras')]),
+    # HMC on the EPI
+    hmcwf = epi_hmc(settings=settings)
 
-    #     # These are necessary sources for the DerivativesDataSink
-    #     (inputfmri, epi_hmc_wf, [('func', 'inputnode.epi')]),
-    #     (inputfmri, epi_mni_trans_wf, [('func', 'inputnode.epi')])
-    # ])
+    # mean EPI registration to T1w
+    epi_2_t1 = epi_mean_t1_registration(settings=settings)
 
-    # if not sbref_present:
-    #     epi_2_t1 = epi_mean_t1_registration(settings=settings)
-    #     workflow.connect([
-    #         (inputfmri, epi_2_t1, [('func', 'inputnode.epi')]),
-    #         (epi_hmc_wf, epi_2_t1, [('outputnode.epi_mean', 'inputnode.epi_mean')]),
-    #         (t1w_preproc, epi_2_t1, [('outputnode.t1_brain', 'inputnode.t1_brain'),
-    #                                  ('outputnode.t1_seg', 'inputnode.t1_seg')]),
-    #         (epi_2_t1, epi_mni_trans_wf, [('outputnode.mat_epi_to_t1', 'inputnode.mat_epi_to_t1')]),
+    # Apply transforms in 1 shot
+    epi_mni_trans_wf = epi_mni_transformation(settings=settings)
 
-    #         (epi_hmc_wf, epi_mni_trans_wf, [('outputnode.xforms', 'inputnode.hmc_xforms'),
-    #                                         ('outputnode.epi_mask', 'inputnode.epi_mask')]),
-    #         (t1w_preproc, epi_mni_trans_wf, [('outputnode.t1_brain', 'inputnode.t1'),
-    #                                          ('outputnode.t1_2_mni_forward_transform',
-    #                                           'inputnode.t1_2_mni_forward_transform')])
-    #     ])
+    workflow.connect([
+        (inputnode, bidssrc, [('subject_id', 'subject_id')]),
+        (bidssrc, t1w_pre, [('t1w', 'inputnode.t1w')]),
+        (bidssrc, hmcwf, [(('func', _first), 'inputnode.epi')]),
+        (bidssrc, epi_2_t1, [(('func', _first), 'inputnode.epi')]),
 
-    # if fmap_wf:
-    #     sbref_wf = sbref_workflow(settings=settings)
-    #     sbref_wf.inputs.inputnode.hmc_mats = []  # FIXME: plug MCFLIRT output here
-    #     sbref_t1 = sbref.sbref_t1_registration(settings=settings)
-    #     unwarp_wf = epi_unwarp(settings=settings)
-    #     sepair_wf = se_pair_workflow(settings=settings)
-    #     workflow.connect([
-    #         (inputnode, sepair_wf, [('fieldmaps', 'inputnode.input_images')]),
-    #         (inputnode, sbref_wf, [('sbref', 'inputnode.sbref')]),
-    #         (inputfmri, unwarp_wf, [('func', 'inputnode.epi')]),
-    #         (sepair_wf, sbref_wf, [
-    #             ('outputnode.mag_brain', 'inputnode.fmap_ref_brain'),
-    #             ('outputnode.fmap_mask', 'inputnode.fmap_mask'),
-    #             ('outputnode.fieldmap', 'inputnode.fieldmap')
-    #         ]),
-    #         (sbref_wf, sbref_t1, [
-    #             ('outputnode.sbref_unwarped', 'inputnode.sbref_brain')]),
-    #         (t1w_preproc, sbref_t1, [
-    #             ('outputnode.t1_brain', 'inputnode.t1_brain'),
-    #             ('outputnode.t1_seg', 'inputnode.t1_seg')]),
-    #         (sbref_wf, unwarp_wf, [
-    #             ('outputnode.sbref_unwarped', 'inputnode.sbref_brain')]),
-    #         (sbref_wf, epi_hmc_wf, [
-    #             ('outputnode.sbref_unwarped', 'inputnode.sbref_brain')]),
-    #         (epi_hmc_wf, unwarp_wf, [
-    #             ('outputnode.epi_brain', 'inputnode.epi_brain')]),
-    #         (sepair_wf, unwarp_wf, [
-    #             ('outputnode.fmap_mask', 'inputnode.fmap_mask'),
-    #             ('outputnode.fieldmap', 'inputnode.fieldmap')
-    #         ]),
-    #     ])
+        (hmcwf, epi_2_t1, [('outputnode.epi_mean', 'inputnode.epi_mean')]),
+        (t1w_pre, epi_2_t1, [('outputnode.t1_brain', 'inputnode.t1_brain'),
+                             ('outputnode.t1_seg', 'inputnode.t1_seg')]),
+        (bidssrc, epi_mni_trans_wf, [(('func', _first), 'inputnode.epi')]),
+        (epi_2_t1, epi_mni_trans_wf, [('outputnode.mat_epi_to_t1', 'inputnode.mat_epi_to_t1')]),
+        (hmcwf, epi_mni_trans_wf, [('outputnode.xforms', 'inputnode.hmc_xforms'),
+                                   ('outputnode.epi_mask', 'inputnode.epi_mask')]),
+        (t1w_pre, epi_mni_trans_wf, [('outputnode.t1_brain', 'inputnode.t1'),
+                                     ('outputnode.t1_2_mni_forward_transform',
+                                      'inputnode.t1_2_mni_forward_transform')])
 
+    ])
     return workflow
 
 def _first(inlist):

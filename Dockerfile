@@ -45,15 +45,15 @@ RUN rm -rf /usr/local/miniconda/lib/python*/site-packages/nipype* && \
     
 
 WORKDIR /root/src
-ADD . fmriprep/
-# Install nipype & mriqc
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
 
+COPY . fmriprep/
 RUN cd fmriprep && \
-    pip install -r requirements.txt && \
     pip install -e .
 
 WORKDIR /root/
-ADD build/files/run_* /usr/bin/
+COPY build/files/run_* /usr/bin/
 RUN chmod +x /usr/bin/run_*
 
 ENTRYPOINT ["/usr/bin/run_fmriprep"]

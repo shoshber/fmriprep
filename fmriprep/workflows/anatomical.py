@@ -23,7 +23,7 @@ from niworkflows.anat.skullstrip import afni_wf as skullstrip_wf
 from niworkflows.common import reorient as mri_reorient_wf
 
 from fmriprep.interfaces import DerivativesDataSink, IntraModalMerge
-from fmriprep.data import get_ants_oasis_template_ras, get_mni_template_ras
+from fmriprep.data import get_ants_oasis_template_ras, get_mni_template
 from fmriprep.viz import stripped_brain_overlay, anatomical_overlay
 
 
@@ -46,7 +46,7 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
     t1wmrg = pe.Node(IntraModalMerge(), name='MergeT1s')
 
     # 1. Reorient T1
-    arw = pe.Node(fs.MRIConvert(out_type='niigz', out_orientation='RAS'), name='Reorient')
+    arw = pe.Node(fs.MRIConvert(out_type='niigz', out_orientation='LAS'), name='Reorient')
 
     # 2. T1 Bias Field Correction
     inu_n4 = pe.Node(ants.N4BiasFieldCorrection(dimension=3), name='CorrectINU')
@@ -62,9 +62,9 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
     # 5. T1w to MNI registration
     t1_2_mni = pe.Node(ants.Registration(), name='T1_2_MNI_Registration')
     t1_2_mni.inputs.num_threads = settings.get('ants_threads', 8)
-    t1_2_mni.inputs.fixed_image = op.join(get_mni_template_ras(), 'MNI152_T1_1mm.nii.gz')
+    t1_2_mni.inputs.fixed_image = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
     t1_2_mni.inputs.fixed_image_mask = op.join(
-        get_mni_template_ras(), 'MNI152_T1_1mm_brain_mask.nii.gz')
+        get_mni_template(), 'MNI152_T1_1mm_brain_mask.nii.gz')
 
     # Hack to avoid re-running ANTs all the times
     grabber_interface = nio.JSONFileGrabber()
@@ -78,10 +78,10 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
     # Resampe the brain mask and the tissue probability maps into mni space
     bmask_mni = pe.Node(ants.ApplyTransforms(
         dimension=3, default_value=0, interpolation='NearestNeighbor'), name='brain_mni_warp')
-    bmask_mni.inputs.reference_image = op.join(get_mni_template_ras(), 'MNI152_T1_1mm.nii.gz')
+    bmask_mni.inputs.reference_image = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
     tpms_mni = pe.MapNode(ants.ApplyTransforms(dimension=3, default_value=0, interpolation='Linear'),
                           iterfield=['input_image'], name='tpms_mni_warp')
-    tpms_mni.inputs.reference_image = op.join(get_mni_template_ras(), 'MNI152_T1_1mm.nii.gz')
+    tpms_mni.inputs.reference_image = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
 
 
     workflow.connect([
@@ -119,13 +119,13 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
     # The T1-to-MNI will be plotted using the segmentation. That's why we transform it first
     seg_2_mni = pe.Node(ants.ApplyTransforms(
         dimension=3, default_value=0, interpolation='NearestNeighbor'), name='T1_2_MNI_warp')
-    seg_2_mni.inputs.reference_image = op.join(get_mni_template_ras(), 'MNI152_T1_1mm.nii.gz')
+    seg_2_mni.inputs.reference_image = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
 
     t1_2_mni_overlay = pe.Node(niu.Function(
         input_names=['in_file', 'overlay_file', 'out_file'], output_names=['out_file'],
         function=stripped_brain_overlay), name='PNG_T1_to_MNI')
     t1_2_mni_overlay.inputs.out_file = 't1_to_mni_overlay.png'
-    t1_2_mni_overlay.inputs.overlay_file = op.join(get_mni_template_ras(), 'MNI152_T1_1mm.nii.gz')
+    t1_2_mni_overlay.inputs.overlay_file = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
 
     datasink = pe.Node(
         interface=nio.DataSink(

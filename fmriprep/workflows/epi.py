@@ -234,7 +234,6 @@ def epi_mni_transformation(name='EPIMNITransformation', settings=None):
             'mat_epi_to_t1',
             't1_2_mni_forward_transform',
             'epi',
-            'epi_ras',
             'epi_mask',
             't1',
             'hmc_xforms'
@@ -277,7 +276,7 @@ def epi_mni_transformation(name='EPIMNITransformation', settings=None):
             suffix='hmc_mni_bmask'), name='DerivativesHMCMNImask')
 
     workflow.connect([
-        (inputnode, pick_1st, [('epi_ras', 'in_file')]),
+        (inputnode, pick_1st, [('epi', 'in_file')]),
         (inputnode, ds_mni, [('epi', 'source_file')]),
         (inputnode, ds_mni_mask, [('epi', 'source_file')]),
         (pick_1st, gen_ref, [('roi_file', 'moving_image')]),
@@ -286,7 +285,7 @@ def epi_mni_transformation(name='EPIMNITransformation', settings=None):
                                        ('hmc_xforms', 'in3')]),
         (inputnode, mask_merge_tfms, [('t1_2_mni_forward_transform', 'in1'),
                                       (('mat_epi_to_t1', _aslist), 'in2')]),
-        (inputnode, split, [('epi_ras', 'in_file')]),
+        (inputnode, split, [('epi', 'in_file')]),
         (split, epi_to_mni_transform, [('out_files', 'input_image')]),
         (merge_transforms, epi_to_mni_transform, [('out', 'transforms')]),
         (gen_ref, epi_to_mni_transform, [('out_file', 'reference_image')]),
@@ -319,16 +318,23 @@ def epi_unwarp(name='EPIUnwarpWorkflow', settings=None):
     mean = pe.Node(fsl.MeanImage(dimension='T'), name='EPImean')
     bet = pe.Node(fsl.BET(frac=0.6, mask=True), name='EPIBET')
 
+    ds_epi_unwarp = pe.Node(
+        DerivativesDataSink(base_directory=settings['output_dir'], 
+                            suffix='epi_unwarp'),
+        name='DerivUnwarp_EPUnwarp_EPI'
+    )
+
     workflow.connect([
         (inputnode, unwarp, [('fmap', 'inputnode.fmap'),
                              ('fmap_ref', 'inputnode.fmap_ref'),
-                             ('fmap_mask', 'inputnode.fmap_mask')]),
-        (inputnode, unwarp, [('epi', 'inputnode.in_file')]),
-
+                             ('fmap_mask', 'inputnode.fmap_mask'),
+                             ('epi', 'inputnode.in_file')]),
+        (inputnode, ds_epi_unwarp, [('epi', 'source_file')]),
         (unwarp, mean, [('outputnode.out_file', 'in_file')]),
         (mean, bet, [('out_file', 'in_file')]),
         (bet, outputnode, [('out_file', 'epi_mean')]),
-        (unwarp, outputnode, [('outputnode.out_file', 'epi_unwarp')])
+        (unwarp, outputnode, [('outputnode.out_file', 'epi_unwarp')]),
+        (unwarp, ds_epi_unwarp, [('outputnode.out_file', 'in_file')])
     ])
 
     # Plot result
