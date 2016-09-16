@@ -70,12 +70,12 @@ def main():
 def enforce_pep8():
     ''' copy commit hook to .git/hooks to ensure linting'''
     import shutil
-    from future.utils import raise_from
+    import warnings
 
     try:
         shutil.copy('./hooks/pre-commit', '.git/hooks/')
     except StandardError as serror:
-        raise_from("failed to set up git hooks", serror)
+        warnings.warn(RuntimeWarning("failed to set up git hooks"), serror)
 
 if __name__ == '__main__':
     LOCAL_PATH = os.path.dirname(os.path.abspath(sys.argv[0]))
