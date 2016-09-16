@@ -19,7 +19,7 @@ def main():
     # Read vars from info file
     module_file = os.path.join(this_path, 'fmriprep', 'info.py')
     with open(module_file) as fvars:
-        exec(compile(fvars.read(), module_file, 'exec'))
+       exec(compile(fvars.read(), module_file, 'exec'))
 
     REQ_LINKS = []
     with open('requirements.txt', 'r') as rfile:
