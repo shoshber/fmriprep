@@ -35,9 +35,9 @@ def base_workflow_enumerator(subject_list, settings):
 
 def base_workflow_generator(subject_id, settings):
     subject_data = collect_bids_data(settings['bids_root'], subject_id)
-    if (subject_data['t1w'] != [] and subject_data['sbref'] != []):
+    if subject_data['t1w'] != [] and subject_data['sbref'] != []:
         return wf_ds054_type(subject_data, settings, name=subject_id)
-    if (subject_data['t1w'] != [] and subject_data['sbref'] == []):
+    if subject_data['t1w'] != [] and subject_data['sbref'] == []:
         return wf_ds005_type(subject_data, settings, name=subject_id)
     return None
 
