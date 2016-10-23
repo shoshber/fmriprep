@@ -16,6 +16,7 @@ from nipype.interfaces import utility as niu
 
 from fmriprep.utils.misc import gen_list
 from fmriprep.workflows.fieldmap.base import create_encoding_file
+from fmriprep.utils.validation import validate, is_4d_nifti, is_3d_nifti
 
 SDC_UNWARP_NAME = 'SDC_unwarp'
 
@@ -124,7 +125,9 @@ def sdc_unwarp(name=SDC_UNWARP_NAME, ref_vol=None, method='jac'):
         (topup_adapt, unwarp, [('out_fieldcoef', 'in_topup_fieldcoef'),
                                ('out_movpar', 'in_topup_movpar')]),
         (encfile, unwarp, [('parameters_file', 'encoding_file')]),
-        (unwarp, outputnode, [('out_corrected', 'out_file')])
+        (unwarp, outputnode, [(('out_corrected', validate, is_3d_nifti, # this will fail (testing circle)
+                                'Output of unwarp node must be 4 dimensional'),
+                               'out_file')])
     ])
 
     # Connect registration settings in the end, not to clutter the code
