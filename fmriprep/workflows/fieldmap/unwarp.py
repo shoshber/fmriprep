@@ -125,7 +125,7 @@ def sdc_unwarp(name=SDC_UNWARP_NAME, ref_vol=None, method='jac'):
         (topup_adapt, unwarp, [('out_fieldcoef', 'in_topup_fieldcoef'),
                                ('out_movpar', 'in_topup_movpar')]),
         (encfile, unwarp, [('parameters_file', 'encoding_file')]),
-        (unwarp, outputnode, [(('out_corrected', validate, is_3d_nifti, # this will fail (testing circle)
+        (unwarp, outputnode, [(('out_corrected', validate, is_4d_nifti,
                                 'Output of unwarp node must be 4 dimensional'),
                                'out_file')])
     ])
