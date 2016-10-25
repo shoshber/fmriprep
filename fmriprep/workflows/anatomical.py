@@ -65,7 +65,7 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
         num_threads=settings.get('ants_threads', 6), testing=settings.get('debug', False)),
         name='T1_2_MNI_Registration')
 
-    # Resampe the brain mask and the tissue probability maps into mni space
+    # Resample the brain mask and the tissue probability maps into mni space
     bmask_mni = pe.Node(ants.ApplyTransforms(
         dimension=3, default_value=0, interpolation='NearestNeighbor'), name='brain_mni_warp')
     bmask_mni.inputs.reference_image = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
@@ -101,25 +101,53 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
     ])
 
     # Connect reporting nodes
-    t1_stripped_overlay = pe.Node(niu.Function(
-        input_names=['in_file', 'overlay_file', 'out_file'], output_names=['out_file'],
-        function=stripped_brain_overlay), name='PNG_T1_SkullStrip')
-    t1_stripped_overlay.inputs.out_file = 't1_stripped_overlay.png'
+    t1_stripped_overlay = pe.Node(
+        niu.Function(
+            input_names=['in_file', 'overlay_file', 'out_file'],
+            output_names=['out_file'],
+            function=stripped_brain_overlay
+        ),
+        name='PNG_T1_SkullStrip'
+    )
+    t1_stripped_overlay.inputs.out_file = 't1_stripped_overlay.svg'
 
-    # The T1-to-MNI will be plotted using the segmentation. That's why we transform it first
-    seg_2_mni = pe.Node(ants.ApplyTransforms(
-        dimension=3, default_value=0, interpolation='NearestNeighbor'), name='T1_2_MNI_warp')
-    seg_2_mni.inputs.reference_image = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
+    #  t1 segmentation mapped onto t1 before registration into mni space
+    t1_seg_native = pe.Node(
+        niu.Function(
+            input_names=['in_file', 'overlay_file', 'out_file'],
+            output_names=['out_file'],
+            function=stripped_brain_overlay
+        ),
+        name='T1SegNative'
+    )
+    t1_seg_native.inputs.out_file = 't1_seg_native.svg'
 
-    t1_2_mni_overlay = pe.Node(niu.Function(
-        input_names=['in_file', 'overlay_file', 'out_file'], output_names=['out_file'],
-        function=stripped_brain_overlay), name='PNG_T1_to_MNI')
-    t1_2_mni_overlay.inputs.out_file = 't1_to_mni_overlay.png'
-    t1_2_mni_overlay.inputs.overlay_file = op.join(get_mni_template(), 'MNI152_T1_1mm.nii.gz')
+    #  The T1-to-MNI will be plotted using the segmentation.
+    #  That's why we transform it first
+    seg_2_mni = pe.Node(
+        ants.ApplyTransforms(dimension=3, default_value=0,
+                             interpolation='NearestNeighbor'),
+        name='T1_2_MNI_warp'
+    )
+    seg_2_mni.inputs.reference_image = op.join(get_mni_template(),
+                                               'MNI152_T1_1mm.nii.gz')
+
+    t1_2_mni_overlay = pe.Node(
+        niu.Function(
+            input_names=['in_file', 'overlay_file', 'out_file'],
+            output_names=['out_file'],
+            function=stripped_brain_overlay
+        ),
+        name='T1ToMNI'
+    )
+    t1_2_mni_overlay.inputs.out_file = 't1_to_mni_overlay.svg'
+    t1_2_mni_overlay.inputs.overlay_file = op.join(get_mni_template(),
+                                                   'MNI152_T1_1mm.nii.gz')
 
     datasink = pe.Node(
         interface=nio.DataSink(
-            base_directory=op.join(settings['output_dir'], 'images')),
+            base_directory=op.join(settings['output_dir'], 'images')
+        ),
         name='datasink',
         parameterization=False
     )
@@ -133,32 +161,47 @@ def t1w_preprocessing(name='t1w_preprocessing', settings=None):
                                ('forward_invert_flags', 'invert_transform_flags')]),
         (seg_2_mni, t1_2_mni_overlay, [('output_image', 'in_file')]),
         (t1_2_mni_overlay, datasink, [('out_file', '@t1_2_mni_overlay')]),
+        (t1_seg, t1_seg_native, [('tissue_class_map', 'in_file')]),
+        (inu_n4, t1_seg_native, [('output_image', 'overlay_file')]),
+        (t1_seg_native, datasink, [('out_file', '@t1_seg_native')])
     ])
 
     # Write corrected file in the designated output dir
     ds_t1_bias = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='inu'), name='DerivT1_inu')
+                            suffix='inu'),
+        name='DerivT1_inu'
+    )
     ds_t1_seg = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='inu_seg'), name='DerivT1_seg')
+                            suffix='inu_seg'),
+        name='DerivT1_seg'
+    )
     ds_mask = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='bmask'), name='DerivT1_mask')
-
+                            suffix='bmask'),
+        name='DerivT1_mask'
+    )
     ds_t1_mni = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='mni'), name='DerivT1w_MNI')
+                            suffix='mni'),
+        name='DerivT1w_MNI'
+    )
     ds_t1_mni_aff = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='mni_affine'), name='DerivT1w_MNI_affine')
-
+                            suffix='mni_affine'),
+        name='DerivT1w_MNI_affine'
+    )
     ds_bmask_mni = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='bmask_mni'), name='DerivT1_Mask_MNI')
+                            suffix='bmask_mni'),
+        name='DerivT1_Mask_MNI'
+    )
     ds_tpms_mni = pe.Node(
         DerivativesDataSink(base_directory=settings['output_dir'],
-            suffix='tpm_mni'), name='DerivT1_TPMs_MNI')
+                            suffix='tpm_mni'),
+        name='DerivT1_TPMs_MNI'
+    )
 
     if settings.get('debug', False):
         workflow.connect([
