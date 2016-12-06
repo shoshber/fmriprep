@@ -40,13 +40,21 @@ def discover_wf(settings, name="ConfoundDiscoverer"):
     signals = pe.Node(nilearn.SignalExtraction(include_global=True, detrend=True,
                                                class_labels=FAST_DEFAULT_SEGS),
                       name="SignalExtraction")
+    signals.interface.estimated_memory_gb = settings[
+                                              "biggest_epi_file_size_gb"] * 3
     # DVARS
     dvars = pe.Node(confounds.ComputeDVARS(save_all=True, remove_zerovariance=True),
                     name="ComputeDVARS")
+    dvars.interface.estimated_memory_gb = settings[
+                                              "biggest_epi_file_size_gb"] * 3
     # Frame displacement
     frame_displace = pe.Node(confounds.FramewiseDisplacement(), name="FramewiseDisplacement")
+    frame_displace.interface.estimated_memory_gb = settings[
+                                              "biggest_epi_file_size_gb"] * 3
     # CompCor
     tcompcor = pe.Node(confounds.TCompCor(components_file='tcompcor.tsv'), name="tCompCor")
+    tcompcor.interface.estimated_memory_gb = settings[
+                                              "biggest_epi_file_size_gb"] * 3
 
     # misc utilities
     concat = pe.Node(utility.Function(function=_gather_confounds, input_names=['signals', 'dvars',
