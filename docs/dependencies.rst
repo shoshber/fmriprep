@@ -13,7 +13,7 @@ Dependencies
 
 
 External Dependencies
-====================
+=====================
 
 ``fMRIprep`` is implemented using ``nipype``, but it requires some other neuroimaging
 software tools: `FSL <http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/>`_,
