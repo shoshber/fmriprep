@@ -146,17 +146,21 @@
 <div class="section" id="docker">
 <h2>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
 <p>First, make sure command-line Docker is installed. If you don&#8217;t receive any output from the following command, <a class="reference external" href="https://docs.docker.com/engine/installation/">install Docker</a>.</p>
-<p>::
-$ which docker</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ which docker
+</pre></div>
+</div>
 <p>Download the latest docker image. You will need an active internet connection.</p>
-<p>::
-$ docker pull poldracklab/fmriprep:latest</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker pull poldracklab/fmriprep:latest
+</pre></div>
+</div>
 <p>Now run fmriprep.</p>
-<p>::
-$ docker run -i -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ &#8211;fmriprep:options</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -i -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ --fmriprep:options
+</pre></div>
+</div>
 <p>For example:</p>
-<p>::
-$ docker run -i -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005 participant -t ds005</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -i -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005 participant -t ds005
+</pre></div>
+</div>
 </div>
 <div class="section" id="singularity">
 <h2>Singularity<a class="headerlink" href="#singularity" title="Permalink to this headline">¶</a></h2>

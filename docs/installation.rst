@@ -7,24 +7,20 @@ There are three ways to use fmriprep: `Docker`_, `Singularity`_, and `Manually P
 Docker
 ======
 
-First, make sure command-line Docker is installed. If you don't receive any output from the following command, `install Docker <https://docs.docker.com/engine/installation/>`_.
+First, make sure command-line Docker is installed. If you don't receive any output from the following command, `install Docker <https://docs.docker.com/engine/installation/>`_. ::
 
-::
 $ which docker
 
-Download the latest docker image. You will need an active internet connection.
+Download the latest docker image. You will need an active internet connection. ::
 
-::
 $ docker pull poldracklab/fmriprep:latest
 
-Now run fmriprep.
+Now run fmriprep. ::
 
-::
 $ docker run -i -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ --fmriprep:options
 
-For example:
+For example: ::
 
-::
 $ docker run -i -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005 participant -t ds005
 
 
