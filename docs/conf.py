@@ -242,7 +242,8 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'fMRIprep.tex', u'fMRIprep Documentation',
-     u'Craig A. Moodie, Krzysztof J. Gorgolewski, Oscar Esteban, Ross Blair.', 'manual'),
+     u'Craig A. Moodie, Krzysztof J. Gorgolewski, Oscar Esteban, Ross Blair, Shoshana Berleant.',
+     'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
