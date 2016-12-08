@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Welcome to fMRIprep’s documentation! &mdash; fMRIprep version documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="author" title="About these documents"
+              href="about.html"/>
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="fMRIprep version documentation" href="#"/>
+        <link rel="next" title="Installation" href="installation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> fMRIprep
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                version
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">fMRIprep</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Welcome to fMRIprep&#8217;s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-fmriprep-s-documentation">
+<h1>Welcome to fMRIprep&#8217;s documentation!<a class="headerlink" href="#welcome-to-fmriprep-s-documentation" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="fmriprep-a-robust-preprocessing-pipeline-for-fmri-data">
+<h1>FMRIPREP: A Robust Preprocessing Pipeline for fMRI Data<a class="headerlink" href="#fmriprep-a-robust-preprocessing-pipeline-for-fmri-data" title="Permalink to this headline">¶</a></h1>
+<p>This pipeline is developed by the <a class="reference external" href="https://poldracklab.stanford.edu/">Poldrack lab at Stanford University</a>
+for use at the <a class="reference external" href="http://reproducibility.stanford.edu/">Center for Reproducible Neuroscience (CRN)</a>,
+as well as for open-source software distribution.</p>
+<a class="reference external image-reference" href="https://circleci.com/gh/poldracklab/fmriprep/tree/master"><img alt="https://circleci.com/gh/poldracklab/fmriprep/tree/master.svg?style=shield" src="https://circleci.com/gh/poldracklab/fmriprep/tree/master.svg?style=shield" /></a>
+<a class="reference external image-reference" href="http://fmriprep.readthedocs.io/en/latest/?badge=latest"><img alt="Documentation Status" src="https://readthedocs.org/projects/fmriprep/badge/?version=latest" /></a>
+<a class="reference external image-reference" href="https://pypi.python.org/pypi/fmriprep/"><img alt="Latest Version" src="https://img.shields.io/pypi/v/fmriprep.svg" /></a>
+<div class="section" id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">fMRIprep</span></code> is a functional magnetic resonance imaging (fMRI) data pre-processing pipeline.
+It performs basic processing steps (coregistration, normalization, unwarping,
+noise component extraction, segmentation, skullstripping etc.) providing outputs that make
+running a variety of group level analyses (task based or resting state fMRI, graph theory measures, surface or volume, etc.) easy.
+<code class="docutils literal"><span class="pre">fMRIrep</span></code> is build around three principles:</p>
+<ol class="arabic simple">
+<li><strong>Robustness</strong> - the pipeline adapts the preprocessing steps depending on the input dataset and should provide results as good as possible independently of scanner make, scanning parameters or presence of additional correction scans (such as fieldmaps)</li>
+<li><strong>Ease of use</strong> - thanks to dependance on the BIDS standard manual parameter input is reduced to a minimum allow the pipelien to run in an automatic fashion.</li>
+<li><strong>&#8220;Glass box&#8221;</strong> philosophy - automation should not mean that one should not visually inspect the results or understand the methods. Thus <code class="docutils literal"><span class="pre">fMRIprep</span></code> provides for each subject visual reports detailing the accuracy of the most importatnt processing steps. This combined with the documentation can help researchers to understand the process and decide which subjects should be kept for the group level analysis.</li>
+</ol>
+</div>
+<div class="section" id="external-dependencies">
+<h2>External Dependencies<a class="headerlink" href="#external-dependencies" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">fMRIprep</span></code> is implemented using <code class="docutils literal"><span class="pre">nipype</span></code>, but it requires some other neuroimaging
+software tools: <a class="reference external" href="http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/">FSL</a>,
+<a class="reference external" href="http://stnava.github.io/ANTs/">ANTs</a>, <a class="reference external" href="https://afni.nimh.nih.gov/">AFNI</a>,
+<a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/">FreeSurfer</a>,
+<a class="reference external" href="https://sourceforge.net/projects/c3d/">C3D</a>.</p>
+<p>These tools must be installed and their binaries available in the
+system&#8217;s <code class="docutils literal"><span class="pre">$PATH</span></code>.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">fMRIprep</span></code> is packaged and available through the PyPi repository.
+Therefore, the easiest way to install the tool is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">fmriprep</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="execution-and-the-bids-format">
+<h2>Execution and the BIDS format<a class="headerlink" href="#execution-and-the-bids-format" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">fmriprep</span></code> workflow takes as principal input the path of the dataset
+that is to be processed.
+The only requirement to the input dataset is that it has a valid <a class="reference external" href="http://bids.neuroimaging.io/">BIDS (Brain
+Imaging Data Structure)</a> format.
+This can be easily checked online using the
+<a class="reference external" href="http://incf.github.io/bids-validator/">BIDS Validator</a>.</p>
+<p>The command line interface follows the
+<a class="reference external" href="https://github.com/BIDS-Apps">BIDS-Apps</a> definition.
+Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fmriprep</span> <span class="n">data</span><span class="o">/</span><span class="n">bids_root</span><span class="o">/</span> <span class="n">out</span><span class="o">/</span> <span class="n">participant</span> <span class="o">-</span><span class="n">w</span> <span class="n">work</span><span class="o">/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="support-and-communication">
+<h2>Support and communication<a class="headerlink" href="#support-and-communication" title="Permalink to this headline">¶</a></h2>
+<p>The documentation of this project is found here: <a class="reference external" href="http://fmriprep.readthedocs.org/en/latest/">http://fmriprep.readthedocs.org/en/latest/</a>.</p>
+<p>If you have a problem or would like to ask a question about how to use <code class="docutils literal"><span class="pre">fmriprep</span></code>,
+please submit a question to NeuroStars.org with an <code class="docutils literal"><span class="pre">fmriprep</span></code> tag.
+NeuroStars.org is a platform similar to StackOverflow but dedicated to neuroinformatics.</p>
+<p>All previous <code class="docutils literal"><span class="pre">fmriprep</span></code> questions are available here:
+<a class="reference external" href="http://neurostars.org/t/fmriprep/">http://neurostars.org/t/fmriprep/</a></p>
+<p>To participate in the <code class="docutils literal"><span class="pre">fmriprep</span></code> development-related discussions please use the
+following mailing list: <a class="reference external" href="http://mail.python.org/mailman/listinfo/neuroimaging">http://mail.python.org/mailman/listinfo/neuroimaging</a>
+Please add <em>[fmriprep]</em> to the subject line when posting on the mailing list.</p>
+<p>All bugs, concerns and enhancement requests for this software can be submitted here:
+<a class="reference external" href="https://github.com/poldracklab/fmriprep/issues">https://github.com/poldracklab/fmriprep/issues</a>.</p>
+</div>
+<div class="section" id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>Please acknowledge this work mentioning explicitly the name of this software (fmriprep)
+and the version, along with the link to the GitHub repository
+(<a class="reference external" href="https://github.com/poldracklab/fmriprep">https://github.com/poldracklab/fmriprep</a>).</p>
+</div>
+<div class="section" id="license-information">
+<h2>License information<a class="headerlink" href="#license-information" title="Permalink to this headline">¶</a></h2>
+<p>We use the 3-clause BSD license; the full license is in the file <code class="docutils literal"><span class="pre">LICENSE</span></code> in
+the <code class="docutils literal"><span class="pre">fmriprep</span></code> distribution.</p>
+<p>All trademarks referenced herein are property of their respective
+holders.</p>
+<p>Copyright (c) 2015-2016, the fmriprep developers and the CRN.
+All rights reserved.</p>
+</div>
+<div class="section" id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this headline">¶</a></h2>
+<p>The <abbr title="Center for Reproducible Neuroscience">CRN</abbr> developers team:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Chris F. Gorgolewski</li>
+<li>Craig Moodie</li>
+<li>Ross Blair</li>
+<li>Shoshana Berleant</li>
+<li>Oscar Esteban</li>
+<li>Russell A. Poldrack</li>
+</ul>
+</div></blockquote>
+<p>Poldrack Lab, Psychology Department, Stanford University.</p>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Craig A. Moodie, Krzysztof J. Gorgolewski, Oscar Esteban, Ross Blair..
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'version',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
