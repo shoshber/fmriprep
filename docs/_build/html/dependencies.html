@@ -89,7 +89,10 @@
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Dependencies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dependencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#external-dependencies">External Dependencies</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 </ul>
 
@@ -137,7 +140,7 @@
             
   <div class="section" id="dependencies">
 <h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
-<ol class="arabic simple">
+<ul class="simple">
 <li><a class="reference external" href="http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/">FSL</a></li>
 <li><a class="reference external" href="http://stnava.github.io/ANTs/">ANTs</a></li>
 <li><a class="reference external" href="http://nipy.org/nipype/">Nipype</a></li>
@@ -147,8 +150,17 @@
 <li><a class="reference external" href="https://github.com/poldracklab/mriqc">MRIQC</a></li>
 <li><a class="reference external" href="http://nipy.org/nibabel/">NiBabel</a></li>
 <li><a class="reference external" href="http://scipy.github.io/old-wiki/pages/PyLab">PyLab</a></li>
-</ol>
-<p>All requirements are listed in <code class="docutils literal"><span class="pre">requirements.txt</span></code> file.</p>
+</ul>
+<div class="section" id="external-dependencies">
+<h2>External Dependencies<a class="headerlink" href="#external-dependencies" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">fMRIprep</span></code> is implemented using <code class="docutils literal"><span class="pre">nipype</span></code>, but it requires some other neuroimaging
+software tools: <a class="reference external" href="http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/">FSL</a>,
+<a class="reference external" href="http://stnava.github.io/ANTs/">ANTs</a>, <a class="reference external" href="https://afni.nimh.nih.gov/">AFNI</a>,
+<a class="reference external" href="https://surfer.nmr.mgh.harvard.edu/">FreeSurfer</a>,
+<a class="reference external" href="https://sourceforge.net/projects/c3d/">C3D</a>.</p>
+<p>These tools must be installed and their binaries available in the
+system&#8217;s <code class="docutils literal"><span class="pre">$PATH</span></code>.</p>
+</div>
 </div>
 
 

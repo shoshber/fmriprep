@@ -88,7 +88,11 @@
             
                 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#execution-and-the-bids-format">Execution and the BIDS format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#support-and-communication">Support and communication</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 </ul>
@@ -137,6 +141,35 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="execution-and-the-bids-format">
+<h2>Execution and the BIDS format<a class="headerlink" href="#execution-and-the-bids-format" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">fmriprep</span></code> workflow takes as principal input the path of the dataset
+that is to be processed.
+The only requirement to the input dataset is that it has a valid <a class="reference external" href="http://bids.neuroimaging.io/">BIDS (Brain
+Imaging Data Structure)</a> format.
+This can be easily checked online using the
+<a class="reference external" href="http://incf.github.io/bids-validator/">BIDS Validator</a>.</p>
+<p>The command line interface follows the
+<a class="reference external" href="https://github.com/BIDS-Apps">BIDS-Apps</a> definition.
+Example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">fmriprep</span> <span class="n">data</span><span class="o">/</span><span class="n">bids_root</span><span class="o">/</span> <span class="n">out</span><span class="o">/</span> <span class="n">participant</span> <span class="o">-</span><span class="n">w</span> <span class="n">work</span><span class="o">/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="support-and-communication">
+<h2>Support and communication<a class="headerlink" href="#support-and-communication" title="Permalink to this headline">¶</a></h2>
+<p>The documentation of this project is found here: <a class="reference external" href="http://fmriprep.readthedocs.org/en/latest/">http://fmriprep.readthedocs.org/en/latest/</a>.</p>
+<p>If you have a problem or would like to ask a question about how to use <code class="docutils literal"><span class="pre">fmriprep</span></code>,
+please submit a question to NeuroStars.org with an <code class="docutils literal"><span class="pre">fmriprep</span></code> tag.
+NeuroStars.org is a platform similar to StackOverflow but dedicated to neuroinformatics.</p>
+<p>All previous <code class="docutils literal"><span class="pre">fmriprep</span></code> questions are available here:
+<a class="reference external" href="http://neurostars.org/t/fmriprep/">http://neurostars.org/t/fmriprep/</a></p>
+<p>To participate in the <code class="docutils literal"><span class="pre">fmriprep</span></code> development-related discussions please use the
+following mailing list: <a class="reference external" href="http://mail.python.org/mailman/listinfo/neuroimaging">http://mail.python.org/mailman/listinfo/neuroimaging</a>
+Please add <em>[fmriprep]</em> to the subject line when posting on the mailing list.</p>
+<p>All bugs, concerns and enhancement requests for this software can be submitted here:
+<a class="reference external" href="https://github.com/poldracklab/fmriprep/issues">https://github.com/poldracklab/fmriprep/issues</a>.</p>
+</div>
 </div>
 
 
