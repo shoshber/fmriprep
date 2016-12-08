@@ -142,18 +142,23 @@
             
   <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>There are three ways to use fmriprep: <a class="reference internal" href="#docker">Docker</a>, <a class="reference external" href="https://github.com/singularityware/singularity">Singularity</a>, and <a class="reference internal" href="#manually-prepared-environment">Manually Prepared Environment</a>.</p>
+<p>There are three ways to use fmriprep: <a class="reference internal" href="#docker">Docker</a>, <a class="reference external" href="https://github.com/singularityware/singularity">Singularity</a>, and <a class="reference internal" href="#manually-prepared-environment">Manually Prepared Environment</a>.
+Once you are ready to run fmriprep, see <a href="#id2"><span class="problematic" id="id3">`Usage`_</span></a> for details.</p>
 <div class="section" id="docker">
 <h2>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h2>
 <p>First, make sure command-line Docker is installed. If you don&#8217;t receive any output from the following command, <a class="reference external" href="https://docs.docker.com/engine/installation/">install Docker</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ which docker
 </pre></div>
 </div>
-<p>Download the latest docker image. You will need an active internet connection.</p>
+<p>Start the Docker daemon. You may need to use <cite>sudo</cite>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ dockerd
+</pre></div>
+</div>
+<p>Download the latest docker image. You will need an active internet connection and some time.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ docker pull poldracklab/fmriprep:latest
 </pre></div>
 </div>
-<p>Now run fmriprep.</p>
+<p>Now, assuming you have data, you can run fmriprep.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -i -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ --fmriprep:options
 </pre></div>
 </div>
@@ -164,29 +169,36 @@
 </div>
 <div class="section" id="singularity">
 <h2>Singularity<a class="headerlink" href="#singularity" title="Permalink to this headline">¶</a></h2>
-<p>As above, make sure Docker is installed.</p>
-<p>::
-$ which docker
-file/path/docker</p>
-<p>Use <a class="reference external" href="https://github.com/singularityware/docker2singularity">docker2singularity</a> to create a singularity image.</p>
-<p>::
-$ docker run -v /var/run/docker.sock:/var/run/docker.sock -v D:hostpathwheretoouptutsingularityimage:/output &#8211;privileged -t &#8211;rm singularityware/docker2singularity poldracklab/fmriprep:latest</p>
-<p>On a computer with <a class="reference external" href="https://github.com/singularityware/singularity">Singularity</a> installed, run fmriprep.</p>
-<p>::
-$ singularity exec path/to/singularity/image.img /usr/bin/run_fmriprep &#8211;fmriprep=options participant</p>
+<p>As above, make sure Docker is installed and the Docker daemon is running.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ which docker
+</pre></div>
+</div>
+<p>file/path/docker
+$ dockerd</p>
+<p>Use <a class="reference external" href="https://github.com/singularityware/docker2singularity">docker2singularity</a> to create a singularity image. You will need an active internet connection and some time.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -v /var/run/docker.sock:/var/run/docker.sock -v D:\host\path\where\to\ouptut\singularity\image:/output --privileged -t --rm singularityware/docker2singularity poldracklab/fmriprep:latest
+</pre></div>
+</div>
+<p>On a computer with <a class="reference external" href="https://github.com/singularityware/singularity">Singularity</a> installed and the data to be prepped, run fmriprep.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ singularity exec path/to/singularity/image.img /usr/bin/run_fmriprep --fmriprep=options participant
+</pre></div>
+</div>
 <p>For example:</p>
-<p>::
-$ singularity exec ~/poldracklab_fmriprep_latest-2016-12-04-5b74ad9a4c4d.img /usr/bin/run_fmriprep &#8211;participant_label sub-387 &#8211;nthreads 1 -w $WORK/lonestar/work &#8211;ants-nthreads 16 &#8211;skull&#8211;strip-ants /work/04168/berleant/lonestar/ $WORK/lonestar/output participant</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ singularity exec ~/poldracklab_fmriprep_latest-2016-12-04-5b74ad9a4c4d.img /usr/bin/run_fmriprep --participant_label sub-387 --nthreads 1 -w $WORK/lonestar/work --ants-nthreads 16 --skull--strip-ants /work/04168/berleant/lonestar/ $WORK/lonestar/output participant
+</pre></div>
+</div>
 </div>
 <div class="section" id="manually-prepared-environment">
 <h2>Manually Prepared Environment<a class="headerlink" href="#manually-prepared-environment" title="Permalink to this headline">¶</a></h2>
 <p>First, make sure you would rather do this than use <a class="reference internal" href="#docker">Docker</a> or <a class="reference external" href="https://github.com/singularityware/singularity">Singularity</a>.</p>
-<p>Make sure all of fmriprep&#8217;s <a href="#id2"><span class="problematic" id="id3">`External Dependencies`_</span></a> are installed. If you have pip installed, install fmriprep:</p>
-<p>::
-$ pip install fmriprep</p>
-<p>Run fmriprep:</p>
-<p>::
-$ fmriprep data/dir work/dir &#8211;participant_label sub-num participant</p>
+<p>Make sure all of fmriprep&#8217;s <a href="#id4"><span class="problematic" id="id5">`External Dependencies`_</span></a> are installed. If you have pip installed, install fmriprep</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install fmriprep
+</pre></div>
+</div>
+<p>If you have your data on hand, you are ready to run fmriprep:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ fmriprep data/dir work/dir --participant_label sub-num participant
+</pre></div>
+</div>
 </div>
 </div>
 
