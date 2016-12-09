@@ -36,7 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="fMRIprep version documentation" href="index.html"/>
-        <link rel="next" title="Dependencies" href="dependencies.html"/>
+        <link rel="next" title="External Dependencies" href="dependencies.html"/>
         <link rel="prev" title="Installation" href="installation.html"/> 
 
   
@@ -93,7 +93,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#support-and-communication">Support and communication</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">External Dependencies</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 </ul>
 
@@ -141,6 +141,17 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Workflow graph:</p>
+<img src="_images/graphviz-062c45e8ef71fa6a06192c58ab7cbf65e9581367.png" alt="digraph foo {
+     &quot;bar&quot; -&gt; &quot;baz&quot;;
+  }" />
+<p>end of graph</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fmriprep.workflows.base</span> <span class="k">import</span> <span class="n">wf_ds005_type</span>
+
+<span class="n">workflow</span> <span class="o">=</span> <span class="n">wf_ds005_type</span><span class="p">({</span><span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="s1">&#39;fake data&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;ants_nthreads&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;output_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;biggest_epi_file_size_gb&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;skip_native&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">workflow</span><span class="o">.</span><span class="n">write_graph</span><span class="p">(</span><span class="n">graph2use</span><span class="o">=</span><span class="s2">&quot;colored&quot;</span><span class="p">,</span> <span class="n">dotfilename</span><span class="o">=</span><span class="s2">&quot;ds005.dot&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="n">simple_form</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="section" id="execution-and-the-bids-format">
 <h2>Execution and the BIDS format<a class="headerlink" href="#execution-and-the-bids-format" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal"><span class="pre">fmriprep</span></code> workflow takes as principal input the path of the dataset
@@ -179,7 +190,7 @@ Please add <em>[fmriprep]</em> to the subject line when posting on the mailing l
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="dependencies.html" class="btn btn-neutral float-right" title="Dependencies" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="dependencies.html" class="btn btn-neutral float-right" title="External Dependencies" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

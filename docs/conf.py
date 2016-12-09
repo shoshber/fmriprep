@@ -46,7 +46,7 @@ extensions = [
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
-    'matplotlib.sphinxext.plot_directive' # for auto-generating workflow imgs
+    'sphinx.ext.graphviz' # for auto-generating workflow imgs
 ]
 
 # Add any paths that contain templates here, relative to this directory.

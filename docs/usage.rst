@@ -1,6 +1,23 @@
 Usage
 -----
 
+Workflow graph:
+
+.. graphviz::
+
+ digraph foo {
+      "bar" -> "baz";
+   }
+
+end of graph
+
+::
+
+    from fmriprep.workflows.base import wf_ds005_type
+
+    workflow = wf_ds005_type({'func': 'fake data'}, {'ants_nthreads': 1, 'output_dir': 'x', 'biggest_epi_file_size_gb': 1, 'skip_native': True})
+    workflow.write_graph(graph2use="colored", dotfilename="ds005.dot", format="svg", simple_form=True)
+
 Execution and the BIDS format
 =============================
 
