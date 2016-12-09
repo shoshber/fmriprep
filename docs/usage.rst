@@ -3,11 +3,7 @@ Usage
 
 Workflow graph:
 
-.. graphviz::
-
- digraph foo {
-      "bar" -> "baz";
-   }
+.. graphviz:: ds005.dot
 
 end of graph
 
