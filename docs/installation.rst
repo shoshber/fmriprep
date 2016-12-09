@@ -63,6 +63,8 @@ If you have your data on hand, you are ready to run fmriprep: ::
 
 $ fmriprep data/dir work/dir --participant_label sub-num participant
 
+wait for it
+
 .. plot::
 
  from pylab import *
