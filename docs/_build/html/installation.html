@@ -159,11 +159,11 @@ Once you are ready to run fmriprep, see <a href="#id2"><span class="problematic"
 </pre></div>
 </div>
 <p>Now, assuming you have data, you can run fmriprep.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -i -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ --fmriprep:options
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run --rm -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/
 </pre></div>
 </div>
 <p>For example:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run -i -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005 participant -t ds005
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ docker run --rm -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005
 </pre></div>
 </div>
 </div>
@@ -180,7 +180,7 @@ $ dockerd</p>
 </pre></div>
 </div>
 <p>On a computer with <a class="reference external" href="https://github.com/singularityware/singularity">Singularity</a> installed and the data to be prepped, run fmriprep.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ singularity exec path/to/singularity/image.img /usr/bin/run_fmriprep --fmriprep=options participant
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ singularity exec path/to/singularity/image.img /usr/bin/run_fmriprep --participant_label label -w path/to/work/dir path/to/data/dir path/to/output/dir participant
 </pre></div>
 </div>
 <p>For example:</p>
@@ -199,6 +199,11 @@ $ dockerd</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ fmriprep data/dir work/dir --participant_label sub-num participant
 </pre></div>
 </div>
+<p>(<a class="reference external" href=".//installation-1.py">Source code</a>, <a class="reference external" href=".//installation-1.png">png</a>, <a class="reference external" href=".//installation-1.hires.png">hires.png</a>, <a class="reference external" href=".//installation-1.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="_images/installation-1.png" src="_images/installation-1.png" />
+</div>
+<p>Tada!</p>
 </div>
 </div>
 
