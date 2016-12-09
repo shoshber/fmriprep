@@ -22,11 +22,11 @@ $ docker pull poldracklab/fmriprep:latest
 
 Now, assuming you have data, you can run fmriprep. ::
 
-$ docker run -i -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ --fmriprep:options
+$ docker run --rm -v filepath/to/data/dir:/data:ro -v filepath/to/output/dir:/out -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/
 
 For example: ::
 
-$ docker run -i -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005 participant -t ds005
+$ docker run --rm -v $HOME/fullds005:/data:ro -v $HOME/dockerout:/out  -w /scratch poldracklab/fmriprep:latest /data /out/out participant -w /out/work/ -t ds005
 
 
 Singularity
@@ -44,7 +44,7 @@ $ docker run -v /var/run/docker.sock:/var/run/docker.sock -v D:\host\path\where\
 
 On a computer with `Singularity <https://github.com/singularityware/singularity>`_ installed and the data to be prepped, run fmriprep. ::
 
-$ singularity exec path/to/singularity/image.img /usr/bin/run_fmriprep --fmriprep=options participant
+$ singularity exec path/to/singularity/image.img /usr/bin/run_fmriprep --participant_label label -w path/to/work/dir path/to/data/dir path/to/output/dir participant
 
 For example: ::
 
