@@ -14,6 +14,7 @@
 
 import os
 import sys
+from fmriprep.workflows.base import wf_ds005_type
 
 # Hack for readthedocs
 # http://blog.rtwilson.com/how-to-make-your-sphinx-documentation-compile-with-readthedocs-when-youre-using-numpy-and-scipy/
@@ -308,3 +309,8 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
+
+# Auto-create DAG pngs
+
+workflow = wf_ds005_type({'func': 'fake data'}, {'ants_nthreads': 1, 'output_dir': 'x', 'biggest_epi_file_size_gb': 1, 'skip_native': True})
+workflow.write_graph(graph2use="colored", dotfilename="ds005.dot", format="svg", simple_form=True)

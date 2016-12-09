@@ -142,16 +142,298 @@
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <p>Workflow graph:</p>
-<img src="_images/graphviz-7aa25b65b34caa6aa108dcce4b96f61ef43a1cb0.png" alt="digraph foo {
-      &quot;bar&quot; -&gt; &quot;baz&quot;;
-   }" />
+<img src="_images/graphviz-f3e3fa9f28603404d3555daa4e59a28f79f8dca7.png" alt="digraph fMRI_prep{
+  label=&quot;fMRI_prep&quot;;
+  fMRI_prep_BIDSDatasource[label=&quot;BIDSDatasource (bids)&quot;, style=filled, fillcolor=&quot;#FFFFC8&quot;];
+  subgraph cluster_fMRI_prep_EPI_HMC {
+      edge [color=&quot;#0000FF&quot;];
+      style=filled;
+      fillcolor=&quot;#B4B4FF&quot;;
+      label=&quot;EPI_HMC&quot;;
+    fMRI_prep_EPI_HMC_inputnode[label=&quot;inputnode (utility)&quot;, shape=box3d,style=filled, color=black, colorscheme=greys7 fillcolor=2];
+    fMRI_prep_EPI_HMC_EPI_hmc[label=&quot;EPI_hmc (fsl)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_EPI_hmc_bet[label=&quot;EPI_hmc_bet (masks)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_MeanEPIStrippedOverlay[label=&quot;MeanEPIStrippedOverlay (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_DerivativesEPImask[label=&quot;DerivativesEPImask (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_DS_Report[label=&quot;DS_Report (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_AvScale[label=&quot;AvScale (fsl)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_MeanEPIOverlayDS[label=&quot;MeanEPIOverlayDS (images)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_hcm2itk[label=&quot;hcm2itk (c3)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_AVScale_Format[label=&quot;AVScale_Format (utils)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_outputnode[label=&quot;outputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_EPI_HMC_EPI_hmc;
+    fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_EPI_HMC_DerivativesEPImask;
+    fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_EPI_HMC_MeanEPIOverlayDS;
+    fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_EPI_HMC_DS_Report;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_MeanEPIStrippedOverlay;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_EPI_hmc_bet;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_AvScale;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_AvScale;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_outputnode;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_outputnode;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_MeanEPIOverlayDS;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_hcm2itk;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_hcm2itk;
+    fMRI_prep_EPI_HMC_EPI_hmc -&gt; fMRI_prep_EPI_HMC_hcm2itk;
+    fMRI_prep_EPI_HMC_EPI_hmc_bet -&gt; fMRI_prep_EPI_HMC_MeanEPIStrippedOverlay;
+    fMRI_prep_EPI_HMC_EPI_hmc_bet -&gt; fMRI_prep_EPI_HMC_DerivativesEPImask;
+    fMRI_prep_EPI_HMC_EPI_hmc_bet -&gt; fMRI_prep_EPI_HMC_outputnode;
+    fMRI_prep_EPI_HMC_EPI_hmc_bet -&gt; fMRI_prep_EPI_HMC_outputnode;
+    fMRI_prep_EPI_HMC_EPI_hmc_bet -&gt; fMRI_prep_EPI_HMC_MeanEPIOverlayDS;
+    fMRI_prep_EPI_HMC_EPI_hmc_bet -&gt; fMRI_prep_EPI_HMC_DS_Report;
+    fMRI_prep_EPI_HMC_MeanEPIStrippedOverlay -&gt; fMRI_prep_EPI_HMC_MeanEPIOverlayDS;
+    fMRI_prep_EPI_HMC_AvScale -&gt; fMRI_prep_EPI_HMC_AVScale_Format;
+    fMRI_prep_EPI_HMC_AvScale -&gt; fMRI_prep_EPI_HMC_AVScale_Format;
+    fMRI_prep_EPI_HMC_hcm2itk -&gt; fMRI_prep_EPI_HMC_outputnode;
+    fMRI_prep_EPI_HMC_AVScale_Format -&gt; fMRI_prep_EPI_HMC_outputnode;
+  }
+  subgraph cluster_fMRI_prep_t1w_preprocessing {
+      edge [color=&quot;#0000FF&quot;];
+      style=filled;
+      fillcolor=&quot;#B4B4FF&quot;;
+      label=&quot;t1w_preprocessing&quot;;
+    fMRI_prep_t1w_preprocessing_inputnode[label=&quot;inputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_MergeT1s[label=&quot;MergeT1s (utils)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_Reorient[label=&quot;Reorient (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_CorrectINU[label=&quot;CorrectINU (ants)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1_mask[label=&quot;DerivT1_mask (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_Segmentation[label=&quot;Segmentation (segmentation)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1_seg[label=&quot;DerivT1_seg (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DS_T1_Seg_Report[label=&quot;DS_T1_Seg_Report (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T1SegNative[label=&quot;T1SegNative (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T1SegNativeDS[label=&quot;T1SegNativeDS (images)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1_inu[label=&quot;DerivT1_inu (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration[label=&quot;T1_2_MNI_Registration (registration)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1w_MNI_affine[label=&quot;DerivT1w_MNI_affine (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_warp[label=&quot;T1_2_MNI_warp (ants)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T1ToMNI[label=&quot;T1ToMNI (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T12MNIOverlayDS[label=&quot;T12MNIOverlayDS (images)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_datasink[label=&quot;datasink (io)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_brain_mni_warp[label=&quot;brain_mni_warp (ants)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_mni_warp[label=&quot;mni_warp (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DS_T1_2_MNI_Report[label=&quot;DS_T1_2_MNI_Report (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_PNG_T1_SkullStrip[label=&quot;PNG_T1_SkullStrip (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_T1StrippedOverlayDS[label=&quot;T1StrippedOverlayDS (images)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1_Mask_MNI[label=&quot;DerivT1_Mask_MNI (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1w_MNI[label=&quot;DerivT1w_MNI (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_outputnode[label=&quot;outputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_tpms_mni_warp[label=&quot;tpms_mni_warp (ants)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_DerivT1_TPMs_MNI[label=&quot;DerivT1_TPMs_MNI (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_T12MNIOverlayDS;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_T1SegNativeDS;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1_TPMs_MNI;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1w_MNI;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1w_MNI_affine;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_MergeT1s;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1_seg;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1_inu;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_mni_warp;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DS_T1_Seg_Report;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1_mask;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1_Mask_MNI;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_T1StrippedOverlayDS;
+    fMRI_prep_t1w_preprocessing_inputnode -&gt; fMRI_prep_t1w_preprocessing_DS_T1_2_MNI_Report;
+    fMRI_prep_t1w_preprocessing_MergeT1s -&gt; fMRI_prep_t1w_preprocessing_Reorient;
+    fMRI_prep_t1w_preprocessing_Reorient -&gt; fMRI_prep_t1w_preprocessing_CorrectINU;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_T1SegNativeDS;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_T1SegNative;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_DerivT1_inu;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_PNG_T1_SkullStrip;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_T1StrippedOverlayDS;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration;
+    subgraph cluster_fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow {
+            edge [color=&quot;#FF0000&quot;];
+            style=filled;
+            fillcolor=&quot;#FFB4B4&quot;;
+            label=&quot;AFNISkullStripWorkflow&quot;;
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_inputnode[label=&quot;inputnode (utility)&quot;, style=filled, fillcolor=&quot;#FFE6E6&quot;];
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_skullstrip[label=&quot;skullstrip (afni)&quot;, style=filled, fillcolor=&quot;#FFE6E6&quot;];
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_sstrip_orig_vol[label=&quot;sstrip_orig_vol (afni)&quot;, style=filled, fillcolor=&quot;#FFE6E6&quot;];
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_binarize[label=&quot;binarize (fsl)&quot;, style=filled, fillcolor=&quot;#FFE6E6&quot;];
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode[label=&quot;outputnode (utility)&quot;, style=filled, fillcolor=&quot;#FFE6E6&quot;];
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_inputnode -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_sstrip_orig_vol;
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_inputnode -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_skullstrip;
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_skullstrip -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_sstrip_orig_vol;
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_sstrip_orig_vol -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_binarize;
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_sstrip_orig_vol -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode;
+        fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_binarize -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode;
+    }
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_tpms_mni_warp;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_T1SegNativeDS;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_DerivT1_seg;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_DS_T1_Seg_Report;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_T1_2_MNI_warp;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_Segmentation -&gt; fMRI_prep_t1w_preprocessing_T1SegNative;
+    fMRI_prep_t1w_preprocessing_T1SegNative -&gt; fMRI_prep_t1w_preprocessing_T1SegNativeDS;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_tpms_mni_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_tpms_mni_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_DerivT1w_MNI_affine;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_DerivT1w_MNI;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_T1_2_MNI_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_T1_2_MNI_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_brain_mni_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_brain_mni_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_mni_warp;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration -&gt; fMRI_prep_t1w_preprocessing_DS_T1_2_MNI_Report;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_warp -&gt; fMRI_prep_t1w_preprocessing_T12MNIOverlayDS;
+    fMRI_prep_t1w_preprocessing_T1_2_MNI_warp -&gt; fMRI_prep_t1w_preprocessing_T1ToMNI;
+    fMRI_prep_t1w_preprocessing_T1ToMNI -&gt; fMRI_prep_t1w_preprocessing_T12MNIOverlayDS;
+    fMRI_prep_t1w_preprocessing_T1ToMNI -&gt; fMRI_prep_t1w_preprocessing_datasink;
+    fMRI_prep_t1w_preprocessing_brain_mni_warp -&gt; fMRI_prep_t1w_preprocessing_DerivT1_Mask_MNI;
+    fMRI_prep_t1w_preprocessing_PNG_T1_SkullStrip -&gt; fMRI_prep_t1w_preprocessing_T1StrippedOverlayDS;
+    fMRI_prep_t1w_preprocessing_tpms_mni_warp -&gt; fMRI_prep_t1w_preprocessing_DerivT1_TPMs_MNI;
+    fMRI_prep_t1w_preprocessing_CorrectINU -&gt; fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_inputnode;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_brain_mni_warp;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_DerivT1_mask;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_Segmentation;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_outputnode;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_PNG_T1_SkullStrip;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_T1StrippedOverlayDS;
+    fMRI_prep_t1w_preprocessing_AFNISkullStripWorkflow_outputnode -&gt; fMRI_prep_t1w_preprocessing_T1_2_MNI_Registration;
+  }
+  subgraph cluster_fMRI_prep_EPIMeanNormalization {
+      edge [color=&quot;#0000FF&quot;];
+      style=filled;
+      fillcolor=&quot;#B4B4FF&quot;;
+      label=&quot;EPIMeanNormalization&quot;;
+    fMRI_prep_EPIMeanNormalization_inputnode[label=&quot;inputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR_init[label=&quot;Flirt_BBR_init (registration)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_WM_mask[label=&quot;WM_mask (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR[label=&quot;Flirt_BBR (registration)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_PNG_epi_to_t1[label=&quot;PNG_epi_to_t1 (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_datasink[label=&quot;datasink (images)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_ds_report[label=&quot;ds_report (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR_Inv[label=&quot;Flirt_BBR_Inv (fsl)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_fsl2itk_inv[label=&quot;fsl2itk_inv (c3)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_DerivEPI_to_T1w_inv[label=&quot;DerivEPI_to_T1w_inv (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_fsl2itk_fwd[label=&quot;fsl2itk_fwd (c3)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_outputnode[label=&quot;outputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_DerivEPI_to_T1w_fwd[label=&quot;DerivEPI_to_T1w_fwd (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_datasink;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_datasink;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_WM_mask;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_DerivEPI_to_T1w_inv;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_DerivEPI_to_T1w_fwd;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_PNG_epi_to_t1;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_ds_report;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_fsl2itk_inv;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_fsl2itk_inv;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR_init;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR_init;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_fsl2itk_fwd;
+    fMRI_prep_EPIMeanNormalization_inputnode -&gt; fMRI_prep_EPIMeanNormalization_fsl2itk_fwd;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR_init -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR;
+    fMRI_prep_EPIMeanNormalization_WM_mask -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR -&gt; fMRI_prep_EPIMeanNormalization_datasink;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR -&gt; fMRI_prep_EPIMeanNormalization_outputnode;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR -&gt; fMRI_prep_EPIMeanNormalization_PNG_epi_to_t1;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR -&gt; fMRI_prep_EPIMeanNormalization_ds_report;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR -&gt; fMRI_prep_EPIMeanNormalization_Flirt_BBR_Inv;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR -&gt; fMRI_prep_EPIMeanNormalization_fsl2itk_fwd;
+    fMRI_prep_EPIMeanNormalization_PNG_epi_to_t1 -&gt; fMRI_prep_EPIMeanNormalization_datasink;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR_Inv -&gt; fMRI_prep_EPIMeanNormalization_outputnode;
+    fMRI_prep_EPIMeanNormalization_Flirt_BBR_Inv -&gt; fMRI_prep_EPIMeanNormalization_fsl2itk_inv;
+    fMRI_prep_EPIMeanNormalization_fsl2itk_inv -&gt; fMRI_prep_EPIMeanNormalization_outputnode;
+    fMRI_prep_EPIMeanNormalization_fsl2itk_inv -&gt; fMRI_prep_EPIMeanNormalization_DerivEPI_to_T1w_inv;
+    fMRI_prep_EPIMeanNormalization_fsl2itk_fwd -&gt; fMRI_prep_EPIMeanNormalization_outputnode;
+    fMRI_prep_EPIMeanNormalization_fsl2itk_fwd -&gt; fMRI_prep_EPIMeanNormalization_DerivEPI_to_T1w_fwd;
+  }
+  subgraph cluster_fMRI_prep_EPIMNITransformation {
+      edge [color=&quot;#0000FF&quot;];
+      style=filled;
+      fillcolor=&quot;#B4B4FF&quot;;
+      label=&quot;EPIMNITransformation&quot;;
+    fMRI_prep_EPIMNITransformation_inputnode[label=&quot;inputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_MaskMergeTfms[label=&quot;MaskMergeTfms (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_GenNewMNIReference[label=&quot;GenNewMNIReference (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_MaskToMNI[label=&quot;MaskToMNI (ants)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_SplitEPI[label=&quot;SplitEPI (fsl)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_MergeTransforms[label=&quot;MergeTransforms (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_EPIToMNITransform[label=&quot;EPIToMNITransform (ants)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_MergeEPI[label=&quot;MergeEPI (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_DerivativesHMCMNI[label=&quot;DerivativesHMCMNI (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_DerivativesHMCMNImask[label=&quot;DerivativesHMCMNImask (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_DerivativesHMCMNImask;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_MergeTransforms;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_MergeTransforms;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_MergeTransforms;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_MaskToMNI;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_DerivativesHMCMNI;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_GenNewMNIReference;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_SplitEPI;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_MaskMergeTfms;
+    fMRI_prep_EPIMNITransformation_inputnode -&gt; fMRI_prep_EPIMNITransformation_MaskMergeTfms;
+    fMRI_prep_EPIMNITransformation_MaskMergeTfms -&gt; fMRI_prep_EPIMNITransformation_MaskToMNI;
+    fMRI_prep_EPIMNITransformation_GenNewMNIReference -&gt; fMRI_prep_EPIMNITransformation_EPIToMNITransform;
+    fMRI_prep_EPIMNITransformation_GenNewMNIReference -&gt; fMRI_prep_EPIMNITransformation_MaskToMNI;
+    fMRI_prep_EPIMNITransformation_MaskToMNI -&gt; fMRI_prep_EPIMNITransformation_DerivativesHMCMNImask;
+    fMRI_prep_EPIMNITransformation_SplitEPI -&gt; fMRI_prep_EPIMNITransformation_EPIToMNITransform;
+    fMRI_prep_EPIMNITransformation_MergeTransforms -&gt; fMRI_prep_EPIMNITransformation_EPIToMNITransform;
+    fMRI_prep_EPIMNITransformation_EPIToMNITransform -&gt; fMRI_prep_EPIMNITransformation_MergeEPI;
+    fMRI_prep_EPIMNITransformation_MergeEPI -&gt; fMRI_prep_EPIMNITransformation_DerivativesHMCMNI;
+  }
+  subgraph cluster_fMRI_prep_ConfoundDiscoverer {
+      edge [color=&quot;#0000FF&quot;];
+      style=filled;
+      fillcolor=&quot;#B4B4FF&quot;;
+      label=&quot;ConfoundDiscoverer&quot;;
+    fMRI_prep_ConfoundDiscoverer_inputnode[label=&quot;inputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_tCompCor[label=&quot;tCompCor (confounds)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_FramewiseDisplacement[label=&quot;FramewiseDisplacement (confounds)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_T1Registration[label=&quot;T1Registration (fsl)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_SignalExtraction[label=&quot;SignalExtraction (nilearn)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_ComputeDVARS[label=&quot;ComputeDVARS (confounds)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_ConcatConfounds[label=&quot;ConcatConfounds (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_outputnode[label=&quot;outputnode (utility)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_DerivConfounds[label=&quot;DerivConfounds (bids)&quot;, style=filled, fillcolor=&quot;#E6E6FF&quot;];
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_ComputeDVARS;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_ComputeDVARS;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_DerivConfounds;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_SignalExtraction;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_ConcatConfounds;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_tCompCor;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_FramewiseDisplacement;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_T1Registration;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_T1Registration;
+    fMRI_prep_ConfoundDiscoverer_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_T1Registration;
+    fMRI_prep_ConfoundDiscoverer_tCompCor -&gt; fMRI_prep_ConfoundDiscoverer_ConcatConfounds;
+    fMRI_prep_ConfoundDiscoverer_FramewiseDisplacement -&gt; fMRI_prep_ConfoundDiscoverer_ConcatConfounds;
+    fMRI_prep_ConfoundDiscoverer_T1Registration -&gt; fMRI_prep_ConfoundDiscoverer_SignalExtraction;
+    fMRI_prep_ConfoundDiscoverer_SignalExtraction -&gt; fMRI_prep_ConfoundDiscoverer_ConcatConfounds;
+    fMRI_prep_ConfoundDiscoverer_ComputeDVARS -&gt; fMRI_prep_ConfoundDiscoverer_ConcatConfounds;
+    fMRI_prep_ConfoundDiscoverer_ConcatConfounds -&gt; fMRI_prep_ConfoundDiscoverer_outputnode;
+    fMRI_prep_ConfoundDiscoverer_ConcatConfounds -&gt; fMRI_prep_ConfoundDiscoverer_DerivConfounds;
+  }
+  fMRI_prep_BIDSDatasource -&gt; fMRI_prep_EPIMeanNormalization_inputnode;
+  fMRI_prep_BIDSDatasource -&gt; fMRI_prep_t1w_preprocessing_inputnode;
+  fMRI_prep_EPIMeanNormalization_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPIMeanNormalization_outputnode -&gt; fMRI_prep_EPIMNITransformation_inputnode;
+  fMRI_prep_t1w_preprocessing_outputnode -&gt; fMRI_prep_EPIMeanNormalization_inputnode;
+  fMRI_prep_t1w_preprocessing_outputnode -&gt; fMRI_prep_EPIMeanNormalization_inputnode;
+  fMRI_prep_t1w_preprocessing_outputnode -&gt; fMRI_prep_EPIMNITransformation_inputnode;
+  fMRI_prep_t1w_preprocessing_outputnode -&gt; fMRI_prep_EPIMNITransformation_inputnode;
+  fMRI_prep_t1w_preprocessing_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_EPIMeanNormalization_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_EPIMeanNormalization_inputnode;
+  fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_EPIMNITransformation_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_EPIMNITransformation_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_EPIMNITransformation_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPI_HMC_outputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+  fMRI_prep_EPI_HMC_inputnode -&gt; fMRI_prep_ConfoundDiscoverer_inputnode;
+}" />
 <p>end of graph</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">fmriprep.workflows.base</span> <span class="k">import</span> <span class="n">wf_ds005_type</span>
-
-<span class="n">workflow</span> <span class="o">=</span> <span class="n">wf_ds005_type</span><span class="p">({</span><span class="s1">&#39;func&#39;</span><span class="p">:</span> <span class="s1">&#39;fake data&#39;</span><span class="p">},</span> <span class="p">{</span><span class="s1">&#39;ants_nthreads&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;output_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;biggest_epi_file_size_gb&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;skip_native&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-<span class="n">workflow</span><span class="o">.</span><span class="n">write_graph</span><span class="p">(</span><span class="n">graph2use</span><span class="o">=</span><span class="s2">&quot;colored&quot;</span><span class="p">,</span> <span class="n">dotfilename</span><span class="o">=</span><span class="s2">&quot;ds005.dot&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;svg&quot;</span><span class="p">,</span> <span class="n">simple_form</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
 <div class="section" id="execution-and-the-bids-format">
 <h2>Execution and the BIDS format<a class="headerlink" href="#execution-and-the-bids-format" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal"><span class="pre">fmriprep</span></code> workflow takes as principal input the path of the dataset
