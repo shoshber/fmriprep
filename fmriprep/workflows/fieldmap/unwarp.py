@@ -16,7 +16,7 @@ from nipype.interfaces import utility as niu
 from niworkflows.interfaces.masks import BETRPT
 
 from fmriprep.utils.misc import gen_list
-from fmriprep.utils.validation import validate, is_3d_nifti
+from fmriprep.utils.validation import validate, is_4d_nifti
 from fmriprep.interfaces.bids import ReadSidecarJSON
 from fmriprep.workflows.fieldmap.utils import create_encoding_file
 
