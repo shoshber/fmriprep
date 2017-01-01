@@ -25,10 +25,6 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# This Dockerfile is to be built for testing purposes inside CircleCI,
-# not for distribution within Docker hub.
-# For that purpose, the Dockerfile is found in build/Dockerfile.
 
 FROM oesteban/crn_nipype:freesurfer
 
@@ -38,20 +34,34 @@ RUN mkdir -p /opt/c3d && \
 ENV C3DPATH /opt/c3d
 ENV PATH $C3DPATH:$PATH
 
-RUN rm -rf /usr/local/miniconda/lib/python*/site-packages/nipype* && \
-    pip install -e git+https://github.com/nipy/nipype.git@master#egg=nipype && \
-    pip install mock && \
-    pip install pandas && \
+RUN rm -rf /usr/local/miniconda && curl -sSLO https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh && \
+    bash Miniconda3-4.2.12-Linux-x86_64.sh -b -p /usr/local/miniconda && \
+    rm Miniconda3-4.2.12-Linux-x86_64.sh
+ENV PATH=/usr/local/miniconda/bin:$PATH \
+	LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8
+
+# Create conda environment
+RUN conda config --add channels conda-forge && \
+    conda install -y numpy scipy matplotlib pandas lxml libxslt nose mock && \
     python -c "from matplotlib import font_manager"
 
+ADD requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+RUN mkdir /niworkflows_data
+ENV CRN_SHARED_DATA /niworkflows_data
+
+RUN python -c 'from niworkflows.data.getters import get_mni_template_ras; get_mni_template_ras()' && \
+    python -c 'from niworkflows.data.getters import get_mni_icbm152_nlin_asym_09c; get_mni_icbm152_nlin_asym_09c()' && \
+    python -c 'from niworkflows.data.getters import get_ants_oasis_template_ras; get_ants_oasis_template_ras()'
 
 WORKDIR /root/src
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
 
 COPY . fmriprep/
 RUN cd fmriprep && \
     pip install -e .[all]
+    #  python setup.py develop && \
 
 WORKDIR /root/
 COPY build/files/run_* /usr/bin/

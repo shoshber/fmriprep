@@ -17,7 +17,8 @@ class TestConfounds(TestWorkflow):
 
     def test_discover_wf(self):
         # run
-        workflow = discover_wf(stub.settings())
+        workflow = discover_wf(stub.settings({'biggest_epi_file_size_gb': 1,
+                                              'skip_native': False}))
         workflow.write_hierarchical_dotfile()
 
         # assert
@@ -31,15 +32,19 @@ class TestConfounds(TestWorkflow):
         # Make sure mandatory inputs are set
         self.assert_inputs_set(workflow, {'outputnode': ['confounds_file'],
                                           'ConcatConfounds': ['signals', 'dvars', 'frame_displace',
-                                                              'tcompcor', 'acompcor'],
-                                          'tCompCor': ['components_file'],
-                                          'aCompCor': ['components_file', 'mask_file'], })
+                                                              #'acompcor', See confounds.py
+                                                              'tcompcor'],
+                                          'tCompCor': ['components_file']})
+                                          # 'aCompCor': ['components_file', 'mask_file'], }) see ^^
 
     @mock.patch('pandas.read_csv')
     @mock.patch.object(pd.DataFrame, 'to_csv', autospec=True)
     @mock.patch.object(pd.DataFrame, '__eq__', autospec=True,
                        side_effect=lambda me, them: me.equals(them))
     def test_gather_confounds(self, df_equality, mock_df, mock_csv_reader):
+        ''' asserts that the function for node ConcatConfounds reads and writes
+        the confounds properly '''
+
         # set up
         signals = "signals.tsv"
         dvars = "dvars.tsv"
@@ -54,4 +59,6 @@ class TestConfounds(TestWorkflow):
         mock_csv_reader.assert_has_calls(calls)
 
         confounds = pd.DataFrame({'a': [0.1], 'b': [0.2]})
-        mock_df.assert_called_once_with(confounds, os.path.abspath("confounds.tsv"), sep="\t")
+
+        mock_df.assert_called_once_with(confounds, os.path.abspath("confounds.tsv"),
+                                        na_rep='n/a', index=False, sep="\t")
