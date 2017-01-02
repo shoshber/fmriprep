@@ -30,7 +30,7 @@ class TestValidation(unittest.TestCase):
             validate(self.nifti_3d_file, is_4d_nifti)
 
     def test_in_workflow(self):
-        ''' make sure that the return value of the workflow is
+        ''' check return value of workflow makes sense.
         not zero on failure, zero on success '''
         def dummy_fun(in_nifti):
             return in_nifti
