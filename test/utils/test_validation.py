@@ -33,7 +33,6 @@ class TestValidation(unittest.TestCase):
         ''' make sure that the return value of the workflow is
         not zero on failure, zero on success '''
         def dummy_fun(in_nifti):
-            print("HEY")
             return in_nifti
 
         def make_dummy_node(name):
