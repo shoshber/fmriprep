@@ -126,7 +126,9 @@ def reorient(in_file):
 
 
 def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
-                                erosion_mm=0):
+                                erosion_mm=0, min_percent=9, max_percent=14):
+    """ min_percent and max_percent defaults are based on results from BEAST with erosion_mm=0 and
+    epi_mask_erosion_mm=10 """
     import os
     import nibabel as nb
     import scipy.ndimage as nd
@@ -161,3 +163,66 @@ def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
     new_nii.to_filename("roi.nii.gz")
     return os.path.abspath("roi.nii.gz"), eroded_mask_file
 
+TBD=1 #######
+
+def _check_brain_volume(in_WM, in_CSF, brain_mask, min_percent=TBD, max_percent=TBD):
+    """ check that the brain volume indicated by the aCompCor mask (`acc_mask`) divided by the
+    brain volume indicated by the brain_mask is between `min_percent` and `max_percent`, inclusive.
+    `*_percent` is a value between 0 and 1. If it isn't, that suggests that the results of aCompCor
+    will not perform well. return value `out_CSF` might be None """
+    import warnings
+
+    import nibabel as nb
+    import numpy as np
+
+    def _combine_masks(masks):
+        target_sum = len(masks)
+
+        combined_data = masks[0]
+        for mask in masks[1:]:
+            combined_data = combined_data.add(mask)
+
+        combined_mask_data = np.zeroes_like(combined_data)
+        combined_mask_data[combined_data == target_sum] = 1 # all masks had a 1
+        return combined_mask_data
+
+    def _percent_volume(mask):
+        return mask.sum(axis=None) / brain_mask_volume
+
+    def _check_volume(masks, min_percent, max_percent, roi_name):
+        percent = _percent_volume(_combine_masks(masks))
+        if percent < min_percent or percent > max_percent:
+            return ('The {} ROI is too small or too big ({} percent of total brain '
+                    'volume)').format(roi_name, percent)
+        else:
+            return 'good'
+
+    for percent in [min_percent, max_percent]:
+        assert percent >= 0
+        assert percent <= 1
+
+    wm_mask_data = nb.load(in_WM).get_data()
+    csf_mask_data = nb.load(in_CSF).get_data()
+    brain_mask_data = nb.load(brain_mask).get_data()
+
+    assert wm_mask_data.shape == brain_mask_data.shape
+    assert csf_mask_data.shape == brain_mask_data.shape
+
+    valid = True
+    brain_mask_volume = brain_mask_data.sum(axis=None)
+
+    csf_volume_status = _check_volume([csf_mask_data], min_percent, max_percent, 'CSF')
+    if csf_volume_status != 'good':
+        warnings.warn(wm_volume_status + ' aCompCor will be calculated using white matter only.')
+        out_CSF = None
+        masks = [wm_mask_data]
+    else:
+        out_CSF = in_CSF
+        masks = [wm_mask_data, csf_mask_data]
+
+    roi_volume_status = _check_volume(masks, min_percent, max_percent, 'aCompCor')
+    if roi_volume_status != 'good':
+        warnings.warn(roi_volume_status)
+        valid = False
+
+    return in_WM, out_CSF, valid
