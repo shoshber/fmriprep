@@ -124,32 +124,33 @@ def reorient(in_file):
     nii.to_filename(outfile)
     return os.path.abspath(outfile)
 
-def try_try_again(in_file, epi_mask, epi_mask_erosion_mm=0, erosion_mm=0,
-                  probability_threshold=.95, min_percent=9, max_percent=14, num_tries = 10):
+def prepare_good_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0, erosion_mm=0,
+                                     probability_threshold=.95, min_percent=9, max_percent=14,
+                                     num_tries = 10):
     """ tune values to get a robust ROI
 
     min_percent and max_percent defaults are based on results from BEAST white matter rois with
     erosion_mm=0 and epi_mask_erosion_mm=10. They are small percentages because for aCompCor we want
     to try very hard to avoid gray matter voxels """
 
-    def _guess_again(epi_mask_erosion_mm, erosion_mm, probability_threshold):
-        return epi_mask_erosion_mm, erosion_mm, probability_threshold
+    def _try_try_again(epi_mask_erosion_mm, erosion_mm, probability_threshold, recursion_depth):
+        if recursion_depth > num_tries:
+            raise RuntimeException('Giving up after {} tries.'.format(num_tries))
+        recursion_depth = recursion_depth + 1
 
-    good_roi, count = False, 0
-    while not good_roi:
         _, roi_proposal = prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm,
                                                       erosion_mm)
-        good_roi, message = _check_brain_volume(roi_proposal, epi_mask, min_percent, max_percent)
+        roi_percent = _get_brain_volume(roi_proposal, epi_mask)
 
-        count = count + 1
-        if count > num_tries:
-            raise RuntimeException(message + '. Giving up after {} tries.'.format(num_tries))
+        # goldilocks recursion
+        if roi_percent < min_percent:
+            return _try_try_again(epi_mask_erosion_mm, erosion_mm, probability_threshold, recursion_depth)
+        elif roi_percent > max_percent:
+            return _try_try_again(epi_mask_erosion_mm, erosion_mm, probability_threshold, recursion_depth)
+        else: # it falls within the right range!
+            return roi_proposal
 
-        epi_mask_erosion_mm, erosion_mm, probability_threshold = _guess_again(epi_mask_erosion_mm,
-                                                                              erosion_mm,
-                                                                              probability_threshold)
-
-    return roi_proposal
+    return _try_try_again(epi_mask_erosion_mm, erosion_mm, probability_threshold, 0)
 
 
 def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
