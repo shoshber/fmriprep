@@ -188,10 +188,12 @@ def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
     new_nii.to_filename("roi.nii.gz")
     return os.path.abspath("roi.nii.gz"), eroded_mask_file
 
-def _check_brain_volume(roi_mask, brain_mask, min_percent, max_percent):
-    """ check that the brain volume indicated by the aCompCor mask (`acc_mask`) divided by the
-    brain volume indicated by the brain_mask is between `min_percent` and `max_percent`, inclusive.
-    `*_percent` is a value between 0 and 100. Returns (boolean, msg) """
+def _get_brain_volume(roi_mask, brain_mask):
+    """ gets the brain volume indicated by `roi_mask` divided by the total brain volume indicated
+    by `brain_mask`
+
+    Returns a percentage (between 0 and 100 inclusive) """
+
     import warnings
 
     import nibabel as nb
@@ -199,18 +201,6 @@ def _check_brain_volume(roi_mask, brain_mask, min_percent, max_percent):
 
     def _percent_volume(mask):
         return mask.sum(axis=None) / brain_mask_volume
-
-    def _check_volume(mask, min_percent, max_percent, roi_mask):
-        percent = _percent_volume(mask)
-        if percent < min_percent or percent > max_percent:
-            return False, ('The {} ROI is too small or too big ({} percent of total brain '
-                    'volume)').format(roi_mask, percent)
-        else:
-            return True, ''
-
-    for percent in [min_percent, max_percent]:
-        assert percent >= 0
-        assert percent <= 1
 
     roi_mask_data = nb.load(in_CSF).get_data()
     brain_mask_data = nb.load(brain_mask).get_data()
@@ -224,9 +214,4 @@ def _check_brain_volume(roi_mask, brain_mask, min_percent, max_percent):
     combined_mask_data = np.zeroslike(combined_data)
     combined_mask_data[combined_data == 2] = 1
 
-    good_roi, message = _check_volume(combined_mask_data, min_percent, max_percent, roi_mask)
-
-    if not good_roi:
-        warnings.warn(message + ' Trying again.')
-
-    return good_roi, ''
+    return _percent_volume(combined_mask)
