@@ -213,7 +213,11 @@ def _check_brain_volume(roi_mask, brain_mask, min_percent, max_percent):
     valid = True
     brain_mask_volume = brain_mask_data.sum(axis=None)
 
-    good_roi, message = _check_volume(roi_mask_data, min_percent, max_percent, roi_mask)
+    combined_data = brain_mask_data.add(roi_mask_data)
+    combined_mask_data = np.zeroslike(combined_data)
+    combined_mask_data[combined_data == 2] = 1
+
+    good_roi, message = _check_volume(combined_mask_data, min_percent, max_percent, roi_mask)
 
     if not good_roi:
         warnings.warn(message + ' Trying again.')
