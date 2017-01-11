@@ -125,12 +125,15 @@ def reorient(in_file):
     return os.path.abspath(outfile)
 
 def try_try_again(in_file, epi_mask, epi_mask_erosion_mm=0, erosion_mm=0,
-                  min_percent=9, max_percent=14, num_tries = 10):
+                  probability_threshold=.95, min_percent=9, max_percent=14, num_tries = 10):
     """ tune values to get a robust ROI
 
     min_percent and max_percent defaults are based on results from BEAST white matter rois with
     erosion_mm=0 and epi_mask_erosion_mm=10. They are small percentages because for aCompCor we want
     to try very hard to avoid gray matter voxels """
+
+    def _guess_again(epi_mask_erosion_mm, erosion_mm, probability_threshold):
+        return epi_mask_erosion_mm, erosion_mm, probability_threshold
 
     good_roi, count = False, 0
     while not good_roi:
@@ -141,6 +144,10 @@ def try_try_again(in_file, epi_mask, epi_mask_erosion_mm=0, erosion_mm=0,
         count = count + 1
         if count > num_tries:
             raise RuntimeException(message + '. Giving up after {} tries.'.format(num_tries))
+
+        epi_mask_erosion_mm, erosion_mm, probability_threshold = _guess_again(epi_mask_erosion_mm,
+                                                                              erosion_mm,
+                                                                              probability_threshold)
 
     return roi_proposal
 
