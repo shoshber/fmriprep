@@ -146,7 +146,7 @@ def try_try_again(in_file, epi_mask, epi_mask_erosion_mm=0, erosion_mm=0,
 
 
 def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
-                                erosion_mm=0):
+                                erosion_mm=0, probability_threshold=0.95):
     import os
     import nibabel as nb
     import scipy.ndimage as nd
@@ -155,7 +155,7 @@ def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
     probability_map_data = probability_map_nii.get_data()
 
     # thresholding
-    probability_map_data[probability_map_data < 0.95] = 0
+    probability_map_data[probability_map_data < probability_threshold] = 0
     probability_map_data[probability_map_data != 0] = 1
 
     epi_mask_nii = nb.load(epi_mask)
