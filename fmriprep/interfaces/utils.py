@@ -148,18 +148,32 @@ def prepare_good_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0, e
             good_roi = roi_proposal
         else: # need to tune
             new_direction = 1 if roi_percent < min_percent else -1
-            if direction is not None and  direction != new_direction:
-                knob = knob + 1 # try the next knob
+            if direction is not None and direction != new_direction:
+                knob = _next_knob(knob)
 
-            values[knob] = values[knob] + direction * steps[knob]
+            found_good_new_value = False
+            while not found_good_new_value:
+                new_value = values[knob] + direction * steps[knob]
+                if mins[knob] <= new_value <= maxes[knob]:
+                    values[knob] = new_value
+                    found_good_new_value = True
+                else:
+                    knob = _next_knob(knob)
+
             good_roi = _try_try_again(recursion_depth + 1, new_direction)
 
         return good_roi
+
+    def _next_knob(knob):
+        if knob == 2:
+            raise RuntimeException('Ran out of knobs. Giving up.')
+        return knob + 1
 
     mins = [min(probability_threshold, .9), min(epi_mask_erosion_mm, 0), min(erosion_mm, 0)]
     maxes = [max(probability_threshold, .99), max(epi_mask_erosion_mm, 30), max(erosion_mm, 10)]
     steps = [.1, 1, 1]
     values = [probability_threshold, epi_mask_erosion_mm, erosion_mm]
+    knob = 0
     return _try_try_again()
 
 
