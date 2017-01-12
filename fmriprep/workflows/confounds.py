@@ -63,6 +63,7 @@ def discover_wf(settings, name="ConfoundDiscoverer"):
     CSF_roi.inputs.erosion_mm = 0
     CSF_roi.inputs.epi_mask_erosion_mm = 30
     CSF_roi.inputs.min_percent = 0 # this can happen if the ventricles are particularly small
+    TBD = 1 # based on beast
     CSF_roi.inputs.max_percent = TBD
 
     WM_roi = pe.Node(utility.Function(input_names=['in_file', 'epi_mask',
