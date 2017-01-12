@@ -134,7 +134,9 @@ def prepare_good_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0, e
     to try very hard to avoid gray matter voxels """
     import copy
 
-    def _try_try_again(recursion_depth):
+    def _try_try_again(recursion_depth=0, direction=None):
+        assert direction in [None, -1, 1]
+
         if recursion_depth > num_tries:
             raise RuntimeException('Giving up after {} tries.'.format(num_tries))
 
@@ -142,36 +144,23 @@ def prepare_good_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0, e
                                                       erosion_mm)
         roi_percent = _get_brain_volume(roi_proposal, epi_mask)
 
-        # goldilocks
         if min_percent <= roi_percent <= max_percent: # it falls within the right range!
             good_roi = roi_proposal
         else: # need to tune
-            if roi_percent < min_percent: # too small, revise upward
-                knob, new_value = _pick_a_knob(num, steps,
-                                    lambda knob, val: return val < maxes[knob])
-            else: # too big, revise downward
-                knob, new_value = _pick_a_knob(num, [-1 * step for step in steps],
-                                    lambda knob, val: return val > mins[knob])
+            new_direction = 1 if roi_percent < min_percent else -1
+            if direction is not None and  direction != new_direction:
+                knob = knob + 1 # try the next knob
 
-            values[knob] = new_value
-            good_roi = _try_try_again(recursion_depth + 1)
+            values[knob] = values[knob] + direction * steps[knob]
+            good_roi = _try_try_again(recursion_depth + 1, new_direction)
 
         return good_roi
 
-    def _pick_a_knob(num, steps, within_limit):
-        """ pick which variable to tune. honestly don't know how to do this. research? """
-        num = num % len[values]
-        for knob in range(num, num + len[values]):
-            adjusted_value = values[knob] + steps[knob]
-            if within_limit(knob, adjusted_value)
-                return knob, adjusted_value
-        return _pick_a_knob(num, [step/2. for step in steps], within_limit)
-
-    mins = [min(epi_mask_erosion_mm, 0), min(erosion_mm, 0), min(probability_threshold, .9)]
-    maxes = [max(epi_mask_erosion_mm, 30), max(erosion_mm, 10), max(probability_threshold, .99)]
-    steps = [1, 1, .1]
-    values = [epi_mask_erosion_mm, erosion_mm, probability_threshold]
-    return _try_try_again(values, 0)
+    mins = [min(probability_threshold, .9), min(epi_mask_erosion_mm, 0), min(erosion_mm, 0)]
+    maxes = [max(probability_threshold, .99), max(epi_mask_erosion_mm, 30), max(erosion_mm, 10)]
+    steps = [.1, 1, 1]
+    values = [probability_threshold, epi_mask_erosion_mm, erosion_mm]
+    return _try_try_again()
 
 
 def prepare_roi_from_probtissue(in_file, epi_mask, epi_mask_erosion_mm=0,
